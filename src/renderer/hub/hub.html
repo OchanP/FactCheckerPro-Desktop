@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FactChecker Pro</title>
+<link rel="stylesheet" href="hub.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <img class="brand-icon" src="../../../assets/icons/icon32.png" alt="">
+    <div>
+      <div class="brand-name">FactChecker Pro</div>
+      <div class="brand-sub">Account Hub</div>
+    </div>
+  </div>
+
+  <div class="sidebar-profile" data-nav="profile">
+    <div class="sp-avatar" id="sp-avatar">🙂</div>
+    <div style="overflow:hidden;">
+      <div class="sp-name" id="sp-name">Loading…</div>
+      <div class="sp-score" id="sp-score">—</div>
+    </div>
+  </div>
+
+  <ul class="nav">
+    <li class="nav-item active" data-nav="overview"><span class="nav-icon">📊</span> Overview</li>
+    <li class="nav-item" data-nav="live"><span class="nav-icon">🔴</span> Live Activity</li>
+    <li class="nav-item" data-nav="check"><span class="nav-icon">🔍</span> Check a Claim</li>
+    <li class="nav-item" data-nav="submissions"><span class="nav-icon">📝</span> My Submissions</li>
+    <li class="nav-item" data-nav="leaderboard"><span class="nav-icon">🏆</span> Leaderboard</li>
+    <li class="nav-item" data-nav="profile"><span class="nav-icon">👤</span> Profile</li>
+    <li class="nav-item" data-nav="settings"><span class="nav-icon">⚙️</span> Settings</li>
+    <li class="nav-item" data-nav="newsfeed"><span class="nav-icon">🌍</span> FactNews</li>
+    <li class="nav-item" data-nav="history"><span class="nav-icon">🕐</span> Browse History</li>
+    <li class="nav-item" data-nav="social"><span class="nav-icon">🔗</span> Social Intel</li>
+    <li class="nav-item" data-nav="podcast-search"><span class="nav-icon">🎙️</span> Podcast Search <span class="nav-new-badge">NEW</span></li>
+    <li class="nav-item" data-nav="factplay"><span class="nav-icon">🎮</span> FactPlay <span class="nav-new-badge">NEW</span></li>
+    <li class="nav-item" data-nav="election-nl"><span class="nav-icon">🗳️</span> Election Watch NL <span class="nav-new-badge">NEW</span></li>
+    <li class="nav-item" data-nav="election-global"><span class="nav-icon">🌐</span> Election Watch — Global <span class="nav-new-badge">NEW</span></li>
+    <li class="nav-item mod-admin-only" data-nav="moderation" id="nav-mod" style="display:none"><span class="nav-icon">🛡️</span> Moderation <span id="mod-badge" class="mod-badge" style="display:none">0</span></li>
+    <li class="nav-item" data-nav="events"><span class="nav-icon">📅</span> Events <span class="nav-new-badge">NEW</span></li>
+    <li class="nav-item" data-nav="help"><span class="nav-icon">💬</span> Help &amp; Support</li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <div class="nav-item" id="btn-signout"><span class="nav-icon">🚪</span> Sign out</div>
+  </div>
+</aside>
+
+<main class="main">
+  <!-- WHATSAPP CHANNEL BANNER -->
+  <div class="wa-channel-banner" id="wa-channel-banner">
+    <div class="wa-inner">
+      <span class="wa-icon">💬</span>
+      <span class="wa-text"><strong>Join our WhatsApp Channel</strong> — fact-check alerts, new features and community updates, straight to your phone.</span>
+      <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Join Now →</a>
+      <button class="wa-close" id="wa-close-btn" title="Dismiss">✕</button>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div>
+      <h1 id="view-title">Overview</h1>
+      <p id="view-subtitle">Your fact-checking activity at a glance</p>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section class="view active" id="view-overview">
+    <!-- Trial / promo status banner — shown when user has an active offer -->
+    <div id="trial-banner" style="display:none;margin-bottom:14px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid #c7d2fe;border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1d4ed8;" id="trial-banner-title">Pro Trial Active</div>
+        <div style="font-size:12px;color:#4338ca;margin-top:2px;" id="trial-banner-desc">100 AI analyses per day</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:11px;color:#6b7280;">Expires</div>
+        <div style="font-size:13px;font-weight:700;color:#0f172a;" id="trial-banner-expires"></div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <h2>Transparency Score</h2>
+        <div class="score-ring-wrap">
+          <div class="score-num-big" id="ov-score">—</div>
+          <div>
+            <div class="score-rank" id="ov-rank">—</div>
+            <div style="font-size:12px;color:var(--gray600);margin-top:2px;">Accuracy rate: <span id="ov-accuracy">—</span></div>
+          </div>
+        </div>
+        <div class="badge-row" id="ov-badges"></div>
+      </div>
+      <div class="card">
+        <h2>Activity</h2>
+        <div class="grid grid-2">
+          <div class="stat-tile"><div class="stat-num" id="ov-submitted">0</div><div class="stat-label">Claims submitted</div></div>
+          <div class="stat-tile"><div class="stat-num" id="ov-verified">0</div><div class="stat-label">Verified</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Recent Submissions</h2>
+      <div id="ov-recent"><div class="empty-state">Loading…</div></div>
+    </div>
+
+    <!-- Extension promo -->
+    <div class="ext-promo-strip">
+      <div class="eps-left">
+        <div class="eps-icon">🔍</div>
+        <div class="eps-body">
+          <strong class="eps-title">Get FactChecker Pro for Chrome</strong>
+          <p class="eps-desc">The browser extension shows real-time credibility scores on every page, highlights claims, and runs AI analysis on social media posts — all without leaving your browser.</p>
+          <div class="eps-features">
+            <span>✓ Live credibility badge</span>
+            <span>✓ AI claim highlighting</span>
+            <span>✓ Social media shield</span>
+            <span>✓ One-click fact-check</span>
+          </div>
+        </div>
+      </div>
+      <a class="eps-cta" href="https://chrome.google.com/webstore/search/factchecker%20pro" id="eps-install-btn">Add to Chrome — Free</a>
+    </div>
+  </section>
+
+  <!-- LIVE ACTIVITY -->
+  <section class="view" id="view-live">
+    <div class="card" style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <strong>Browser connection</strong>
+        <div style="font-size:12px;color:var(--gray600);margin-top:2px;" id="live-conn-desc">
+          Waiting for activity from the FactChecker Pro browser extension…
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span id="live-conn-dot" style="width:10px;height:10px;border-radius:50%;background:var(--gray400);transition:background .4s;"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Live Feed</h2>
+      <div id="live-list"><div class="empty-state"><div class="icon">📡</div>Browse with the FactChecker Pro extension installed and events will appear here in real time.</div></div>
+    </div>
+  </section>
+
+  <!-- CHECK A CLAIM -->
+  <section class="view" id="view-check">
+    <div class="card" style="max-width:640px;">
+      <h2>Submit a claim to check</h2>
+      <div class="banner" id="check-banner"></div>
+      <div class="form-group">
+        <label>Claim text</label>
+        <textarea id="check-text" placeholder="Paste the claim or statement you want fact-checked…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Source URL (optional)</label>
+          <input type="text" id="check-url" placeholder="https://…">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="check-category">
+            <option value="general">General</option>
+            <option value="politics">Politics</option>
+            <option value="health">Health</option>
+            <option value="science">Science</option>
+            <option value="finance">Finance</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="check-priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <button class="btn" id="check-submit">Submit for Fact-Check (+5 pts)</button>
+    </div>
+  </section>
+
+  <!-- SUBMISSIONS -->
+  <section class="view" id="view-submissions">
+    <div class="card">
+      <h2>My Submissions</h2>
+      <div id="sub-list"><div class="empty-state">Loading…</div></div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section class="view" id="view-leaderboard">
+    <div class="card">
+      <h2>Top Fact-Checkers</h2>
+      <table>
+        <thead><tr><th>#</th><th>User</th><th>Score</th><th>Rank</th></tr></thead>
+        <tbody id="lb-body"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="view" id="view-profile">
+    <div class="card" style="max-width:520px;">
+      <h2>Edit Profile</h2>
+      <div class="banner" id="profile-banner"></div>
+      <div class="form-group">
+        <label>Avatar</label>
+        <div class="avatar-emoji-picker" id="avatar-picker"></div>
+      </div>
+      <div class="form-group">
+        <label>Display Name</label>
+        <input type="text" id="profile-display">
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="profile-bio" placeholder="A short bio…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="profile-location" placeholder="City, Country">
+      </div>
+      <button class="btn" id="profile-save">Save Profile</button>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings">
+    <div class="card" style="max-width:520px;">
+      <h2>App Settings</h2>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Desktop notifications</div>
+          <div class="toggle-desc">Alerts when a claim you submitted is verified or debunked</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="set-notifications"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Launch at login</div>
+          <div class="toggle-desc">Start FactChecker Pro automatically with Windows</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="set-launch"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row" style="flex-direction:column;align-items:flex-start;gap:8px;border-top:1px solid var(--gray100);padding-top:16px;margin-top:4px;">
+        <div>
+          <div class="toggle-label">Interface language</div>
+          <div class="toggle-desc">Choose the language used for claim detection and the news feed</div>
+        </div>
+        <select id="set-language" style="padding:8px 12px;border:1px solid var(--gray200);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+          <option value="en">English</option>
+          <option value="nl">Dutch (Nederlands)</option>
+          <option value="fr">French (Français)</option>
+          <option value="de">German (Deutsch)</option>
+          <option value="es">Spanish (Español)</option>
+        </select>
+      </div>
+      <div class="toggle-row" style="flex-direction:column;align-items:flex-start;gap:6px;border-top:1px solid var(--gray100);padding-top:16px;margin-top:4px;">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;width:100%;box-sizing:border-box;">
+          <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px;">🤖 AI Analysis</div>
+          <div style="font-size:12px;color:#15803d;line-height:1.5;">AI fact-checking is powered by the FactChecker Pro server. No personal API key needed. Your daily analysis quota depends on your account tier.</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-secondary" id="btn-open-extension-note">About</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+  <!-- NEWS FEED -->
+  <section class="view" id="view-newsfeed">
+    <!-- Feed toolbar: search, notifications, customize -->
+    <div class="nf-toolbar">
+      <div class="nf-search-box">
+        <span class="nf-search-icon">🔍</span>
+        <input type="text" id="nf-search-input" placeholder="Search the feed — e.g. elections, climate, health…" autocomplete="off">
+        <button id="nf-search-clear" class="nf-search-clear" style="display:none" title="Clear search">✕</button>
+      </div>
+      <div class="nf-toolbar-actions">
+        <div class="nf-notif-wrap">
+          <button id="nf-notif-btn" class="nf-icon-btn" title="Notifications">
+            🔔<span id="nf-notif-badge" class="nf-notif-badge" style="display:none">0</span>
+          </button>
+          <div id="nf-notif-dropdown" class="nf-notif-dropdown" style="display:none">
+            <div class="nf-notif-header">
+              <span>Notifications</span>
+              <button id="nf-notif-mark-read" class="nf-notif-mark-read">Mark all read</button>
+            </div>
+            <div id="nf-notif-list" class="nf-notif-list">
+              <div class="nf-notif-empty">No new fact-checks yet.</div>
+            </div>
+          </div>
+        </div>
+        <div class="nf-customize-wrap">
+          <button id="nf-customize-btn" class="nf-icon-btn" title="Customize feed">⚙️</button>
+          <div id="nf-customize-panel" class="nf-customize-panel" style="display:none">
+            <div class="nf-customize-header">Customize your feed</div>
+            <div class="nf-customize-sub">Choose which topics show up as chips below</div>
+            <div id="nf-customize-cats" class="nf-customize-cats"></div>
+            <div class="nf-customize-header" style="margin-top:12px;">Card size</div>
+            <div class="nf-density-row">
+              <button class="nf-density-btn active" data-density="comfortable">Comfortable</button>
+              <button class="nf-density-btn" data-density="compact">Compact</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nf-controls">
+      <div class="nf-control-group">
+        <label>Country</label>
+        <select id="nf-country" class="nf-select">
+          <option value="all">🌍 All Countries</option>
+          <option value="us" selected>United States</option>
+          <option value="gb">United Kingdom</option>
+          <option value="ng">Nigeria</option>
+          <option value="ug">Uganda</option>
+          <option value="gh">Ghana</option>
+          <option value="ke">Kenya</option>
+          <option value="za">South Africa</option>
+          <option value="au">Australia</option>
+          <option value="ca">Canada</option>
+          <option value="fr">France</option>
+          <option value="de">Germany</option>
+          <option value="nl">Netherlands</option>
+          <option value="in">India</option>
+          <option value="br">Brazil</option>
+        </select>
+      </div>
+      <div class="nf-control-group">
+        <label>Language</label>
+        <select id="nf-lang" class="nf-select">
+          <option value="en" selected>English</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="es">Spanish</option>
+          <option value="pt">Portuguese</option>
+          <option value="nl">Dutch</option>
+          <option value="it">Italian</option>
+          <option value="ar">Arabic</option>
+          <option value="hi">Hindi</option>
+          <option value="zh">Chinese</option>
+          <option value="ru">Russian</option>
+          <option value="sv">Swedish</option>
+        </select>
+      </div>
+      <button class="btn btn-sm" id="nf-refresh">↻ Refresh</button>
+    </div>
+    <div class="nf-chips" id="nf-chips">
+      <button class="chip active" data-cat="general">All</button>
+      <button class="chip" data-cat="world">World</button>
+      <button class="chip" data-cat="politics">Politics</button>
+      <button class="chip" data-cat="health">Health</button>
+      <button class="chip" data-cat="science">Science</button>
+      <button class="chip" data-cat="business">Business</button>
+      <button class="chip" data-cat="technology">Technology</button>
+    </div>
+    <div class="nf-newsfeed-layout">
+      <div class="nf-feed-col">
+        <div id="nf-grid" class="nf-feed-list"><div class="empty-state">Loading news…</div></div>
+      </div>
+      <!-- Right rail: debunked & fact-checked -->
+      <aside class="nf-aside">
+        <div class="nf-aside-header">
+          <span class="nf-aside-badge">🔍 Debunked &amp; Fact-Checked</span>
+        </div>
+        <div class="nf-debunked-list" id="nf-debunked-list"><div class="empty-state">Loading…</div></div>
+        <p id="nf-debunked-empty" style="font-size:12px;color:var(--gray600);text-align:center;display:none;">
+          No recent fact-checks found for this region.
+        </p>
+        <!-- Promotional card slot (holiday safety tips render here when a season is active) -->
+        <div id="nf-promo-slot" style="margin-top:14px;"></div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--gray100);">
+          <div style="font-size:11px;font-weight:700;color:var(--gray600);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Trusted fact-check sources</div>
+          <div class="nf-fc-sources">
+            <a class="nf-fc-link" href="https://www.snopes.com" target="_blank" rel="noopener">Snopes</a>
+            <a class="nf-fc-link" href="https://www.politifact.com" target="_blank" rel="noopener">PolitiFact</a>
+            <a class="nf-fc-link" href="https://fullfact.org" target="_blank" rel="noopener">Full Fact</a>
+            <a class="nf-fc-link" href="https://www.factcheck.org" target="_blank" rel="noopener">FactCheck.org</a>
+            <a class="nf-fc-link" href="https://africacheck.org" target="_blank" rel="noopener">Africa Check</a>
+            <a class="nf-fc-link" href="https://www.nieuwscheckers.nl" target="_blank" rel="noopener">Nieuwscheckers NL</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ELECTION WATCH NL (pilot) -->
+  <section class="view" id="view-election-nl">
+    <div class="ewnl-pilot-banner">
+      <span class="ewnl-pilot-badge">PILOT</span>
+      <span>Built after a conversation with Dutch election-disinformation researchers. Claims here are sourced specifically from Dutch-language fact-checkers and NL-market news, not machine-translated from elsewhere. Feedback welcome — this is an early experiment.</span>
+    </div>
+
+    <div class="nf-search-box" style="margin-bottom:16px;max-width:520px">
+      <span class="nf-search-icon">🔍</span>
+      <input type="text" id="ewnl-search-input" placeholder="Search a claim — e.g. stemfraude, kiesraad…" autocomplete="off">
+      <button id="ewnl-search-clear" class="nf-search-clear" style="display:none" title="Clear search">✕</button>
+    </div>
+
+    <div class="nf-newsfeed-layout">
+      <div class="nf-feed-col">
+        <div style="font-size:11px;font-weight:700;color:var(--gray600);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Election claims fact-checked in Dutch</div>
+        <div id="ewnl-claims-list"><div class="empty-state">Loading…</div></div>
+      </div>
+      <aside class="nf-aside">
+        <div class="nf-aside-header">
+          <span class="nf-aside-badge">NL news on this topic</span>
+        </div>
+        <div id="ewnl-news-list"><div class="empty-state">Loading…</div></div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--gray100);">
+          <div style="font-size:11px;font-weight:700;color:var(--gray600);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Trusted NL fact-check sources</div>
+          <div class="nf-fc-sources">
+            <a class="nf-fc-link" href="https://www.nieuwscheckers.nl" target="_blank" rel="noopener">Nieuwscheckers NL</a>
+            <a class="nf-fc-link" href="https://www.kiesraad.nl" target="_blank" rel="noopener">Kiesraad</a>
+            <a class="nf-fc-link" href="https://www.euvsdisinfo.eu" target="_blank" rel="noopener">EUvsDisinfo</a>
+          </div>
+        </div>
+        <p class="ewnl-disclaimer">This is a pilot. Coverage depends on what Dutch fact-checkers have published — an empty result does not mean a claim is true.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ELECTION WATCH — GLOBAL -->
+  <section class="view" id="view-election-global">
+    <div class="ewnl-pilot-banner">
+      <span>Coverage depends on what fact-checkers have published for the country you pick below — an empty result does not mean a claim is true.</span>
+    </div>
+
+    <div class="nf-controls">
+      <div class="nf-control-group">
+        <label>Country</label>
+        <select id="ewg-country-select" class="nf-select">
+          <option value="all">🌍 All Countries</option>
+          <option value="us" selected>United States</option>
+          <option value="gb">United Kingdom</option>
+          <option value="ng">Nigeria</option>
+          <option value="ke">Kenya</option>
+          <option value="za">South Africa</option>
+          <option value="au">Australia</option>
+          <option value="ca">Canada</option>
+          <option value="fr">France</option>
+          <option value="de">Germany</option>
+          <option value="nl">Netherlands</option>
+          <option value="in">India</option>
+          <option value="br">Brazil</option>
+          <option value="it">Italy</option>
+          <option value="es">Spain</option>
+        </select>
+      </div>
+      <div class="nf-control-group">
+        <label>Language</label>
+        <select id="ewg-lang-select" class="nf-select">
+          <option value="en" selected>English</option>
+          <option value="nl">Dutch</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="es">Spanish</option>
+          <option value="it">Italian</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="nf-search-box" style="margin-bottom:16px;max-width:520px">
+      <span class="nf-search-icon">🔍</span>
+      <input type="text" id="ewg-search-input" placeholder="Search a claim — e.g. voter fraud, ballot…" autocomplete="off">
+      <button id="ewg-search-clear" class="nf-search-clear" style="display:none" title="Clear search">✕</button>
+    </div>
+
+    <div class="nf-newsfeed-layout">
+      <div class="nf-feed-col">
+        <div style="font-size:11px;font-weight:700;color:var(--gray600);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Election claims fact-checked</div>
+        <div id="ewg-claims-list"><div class="empty-state">Loading…</div></div>
+      </div>
+      <aside class="nf-aside">
+        <div class="nf-aside-header">
+          <span class="nf-aside-badge">News on this topic</span>
+        </div>
+        <div id="ewg-news-list"><div class="empty-state">Loading…</div></div>
+        <p class="ewnl-disclaimer">Election claims and news for the country and language you pick above. Coverage varies by country.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PODCAST SEARCH -->
+  <section class="view" id="view-podcast-search">
+    <div class="nf-search-box" style="margin-bottom:16px;max-width:520px">
+      <span class="nf-search-icon">🔍</span>
+      <input type="text" id="pod-search-input" placeholder="e.g. Joe Rogan, The Daily…" autocomplete="off">
+      <button id="pod-search-clear" class="nf-search-clear" style="display:none" title="Clear search">✕</button>
+    </div>
+    <div id="pod-starting-chips" style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px"></div>
+    <div id="pod-loading" class="empty-state" style="display:none">Searching…</div>
+    <div id="pod-results" class="pod-results-grid"></div>
+  </section>
+
+  <!-- BROWSE HISTORY -->
+  <section class="view" id="view-history">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Page Analysis History</h2>
+        <button class="btn btn-sm btn-secondary" id="hist-clear">Clear</button>
+      </div>
+      <div id="hist-list"><div class="empty-state"><div class="icon">🕐</div>Pages analysed by the extension will appear here.</div></div>
+    </div>
+  </section>
+
+  <!-- SOCIAL INTEL -->
+  <section class="view" id="view-social">
+
+    <!-- Radar stats -->
+    <div class="si-radar">
+      <div class="si-radar-card">
+        <div class="si-radar-val" id="si-scans">0</div>
+        <div class="si-radar-lbl">Claims scanned</div>
+      </div>
+      <div class="si-radar-card si-radar-alert">
+        <div class="si-radar-val" id="si-flagged">0</div>
+        <div class="si-radar-lbl">Posts flagged</div>
+      </div>
+      <div class="si-radar-card">
+        <div class="si-radar-val" id="si-score">—</div>
+        <div class="si-radar-lbl">Transparency score</div>
+      </div>
+    </div>
+
+    <!-- Platform tab bar -->
+    <div class="si-tab-bar">
+      <button class="si-tab active" data-sitab="youtube">📺 YouTube</button>
+      <button class="si-tab" data-sitab="twitter">𝕏 Twitter / X</button>
+      <button class="si-tab" data-sitab="reddit">🤖 Reddit</button>
+      <button class="si-tab" data-sitab="linkedin">💼 LinkedIn</button>
+      <button class="si-tab" data-sitab="substack">📰 Substack</button>
+      <button class="si-tab" data-sitab="facebook">👥 Facebook</button>
+      <button class="si-tab" data-sitab="instagram">📸 Instagram</button>
+      <button class="si-tab" data-sitab="tiktok">🎵 TikTok</button>
+      <button class="si-tab" data-sitab="ai">🤖 AI Analysis</button>
+      <button class="si-tab" data-sitab="keywords">🔑 Keywords</button>
+      <button class="si-tab" data-sitab="research">🔍 Research</button>
+    </div>
+
+    <!-- YOUTUBE PANEL -->
+    <div class="si-panel active" id="si-panel-youtube">
+      <div class="card">
+        <h2>YouTube Misinformation Check</h2>
+        <div class="form-group">
+          <label>Search topic or claim</label>
+          <input type="text" id="yt-query" placeholder="E.g. climate change, vaccine safety, election fraud…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="yt-search">▶ Search YouTube</button>
+          <button class="btn btn-sm btn-secondary" id="yt-trending">🔥 Trending Topics</button>
+          <button class="btn btn-sm btn-secondary" id="yt-factcheck">🔍 Fact-Check Videos</button>
+          <button class="btn btn-sm btn-secondary" id="yt-misinfo">⚠ Misinformation Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Check comment sections for red-flag phrases like "they don't want you to know".</div>
+          <div class="si-tip">💡 Cross-reference view counts vs subscriber counts — viral low-credibility content often looks inflated.</div>
+          <div class="si-tip">💡 Use the YouTube DataViewer tool to verify upload date and metadata.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent YouTube Flags</h2>
+        <div id="yt-flags"><div class="empty-state"><div class="icon">📺</div>No YouTube flags yet. Use the browser extension while watching videos.</div></div>
+      </div>
+    </div>
+
+    <!-- TWITTER / X PANEL -->
+    <div class="si-panel" id="si-panel-twitter">
+      <div class="card">
+        <h2>Twitter / X Misinformation Check</h2>
+        <div class="form-group">
+          <label>Search claim or topic</label>
+          <input type="text" id="tw-query" placeholder="E.g. election fraud, vaccine side effects, breaking news…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="tw-search">🔍 Search X</button>
+          <button class="btn btn-sm btn-secondary" id="tw-advanced">⚙ Advanced Search</button>
+          <button class="btn btn-sm btn-secondary" id="tw-community-notes">📝 Community Notes</button>
+          <button class="btn btn-sm btn-secondary" id="tw-trending">🔥 Trending</button>
+          <button class="btn btn-sm btn-secondary" id="tw-report">🚩 Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Community Notes (formerly Birdwatch) adds corrections directly on viral tweets — check them before sharing.</div>
+          <div class="si-tip">💡 Bot accounts often have high tweet counts, low followers and were created recently. Check account age.</div>
+          <div class="si-tip">💡 Advanced Search lets you filter by date and location — useful for tracing when a claim first appeared.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent X / Twitter Flags</h2>
+        <div id="tw-flags"><div class="empty-state"><div class="icon">𝕏</div>No X flags yet. Use the browser extension while on X.</div></div>
+      </div>
+    </div>
+
+    <!-- REDDIT PANEL -->
+    <div class="si-panel" id="si-panel-reddit">
+      <div class="card">
+        <h2>Reddit Claim Tracker</h2>
+        <div class="form-group">
+          <label>Search subreddit or claim</label>
+          <input type="text" id="rd-query" placeholder="E.g. r/worldnews, conspiracy theory, health claim…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="rd-search">🔍 Search Reddit</button>
+          <button class="btn btn-sm btn-secondary" id="rd-factcheck">🧐 r/factcheck</button>
+          <button class="btn btn-sm btn-secondary" id="rd-debunk">⚡ r/Debunk</button>
+          <button class="btn btn-sm btn-secondary" id="rd-trending">🔥 Hot Topics</button>
+          <button class="btn btn-sm btn-secondary" id="rd-report">🚩 Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Check account age and karma before trusting a post. New accounts with high karma are a red flag.</div>
+          <div class="si-tip">💡 r/factcheck and r/Debunking communities actively review viral claims — search there first.</div>
+          <div class="si-tip">💡 Reddit AMA (Ask Me Anything) claims can be verified by checking the linked proof in the original post.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent Reddit Flags</h2>
+        <div id="rd-flags"><div class="empty-state"><div class="icon">🤖</div>No Reddit flags yet. Use the browser extension while on Reddit.</div></div>
+      </div>
+    </div>
+
+    <!-- LINKEDIN PANEL -->
+    <div class="si-panel" id="si-panel-linkedin">
+      <div class="card">
+        <h2>LinkedIn Verification</h2>
+        <div class="form-group">
+          <label>Search person, company or claim</label>
+          <input type="text" id="li-query" placeholder="E.g. person name, company, viral post claim…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="li-search">🔍 Search LinkedIn</button>
+          <button class="btn btn-sm btn-secondary" id="li-company">🏢 Company Check</button>
+          <button class="btn btn-sm btn-secondary" id="li-news">📰 LinkedIn News</button>
+          <button class="btn btn-sm btn-secondary" id="li-report">🚩 Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Check if the author has verifiable credentials — look for company associations and education history.</div>
+          <div class="si-tip">💡 Fake profiles often have stock photos. Reverse image search any profile picture before engaging.</div>
+          <div class="si-tip">💡 Viral business statistics on LinkedIn are often unverified. Always look for the original source before sharing.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent LinkedIn Flags</h2>
+        <div id="li-flags"><div class="empty-state"><div class="icon">💼</div>No LinkedIn flags yet. Use the browser extension while on LinkedIn.</div></div>
+      </div>
+    </div>
+
+    <!-- SUBSTACK PANEL -->
+    <div class="si-panel" id="si-panel-substack">
+      <div class="card">
+        <h2>Substack Newsletter Checker</h2>
+        <div class="form-group">
+          <label>Search newsletter or claim</label>
+          <input type="text" id="ss-query" placeholder="E.g. newsletter name, author, health claim, political claim…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="ss-search">🔍 Search Substack</button>
+          <button class="btn btn-sm btn-secondary" id="ss-leaderboard">📊 Top Newsletters</button>
+          <button class="btn btn-sm btn-secondary" id="ss-google">🔎 Google This Claim</button>
+          <button class="btn btn-sm btn-secondary" id="ss-report">🚩 Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Substack newsletters bypass traditional editorial gatekeeping. Always check whether claims cite primary sources.</div>
+          <div class="si-tip">💡 Anonymous newsletters with no author bio are higher risk. Look for a byline and check the author on other platforms.</div>
+          <div class="si-tip">💡 Paid newsletters can still publish misinformation. Subscriber count does not equal credibility.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent Substack Flags</h2>
+        <div id="ss-flags"><div class="empty-state"><div class="icon">📰</div>No Substack flags yet. Use the browser extension while reading newsletters.</div></div>
+      </div>
+    </div>
+
+    <!-- FACEBOOK PANEL -->
+    <div class="si-panel" id="si-panel-facebook">
+      <div class="card">
+        <h2>Facebook Claim Tracker</h2>
+        <div class="form-group">
+          <label>Search topic or post content</label>
+          <input type="text" id="fb-query" placeholder="E.g. health misinformation, political claim…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="fb-search">🔍 Search Facebook</button>
+          <button class="btn btn-sm btn-secondary" id="fb-crowdtangle">📊 CrowdTangle</button>
+          <button class="btn btn-sm btn-secondary" id="fb-transparency">🏛 Ad Library</button>
+          <button class="btn btn-sm btn-secondary" id="fb-report">🚩 Report Centre</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Facebook's Ad Transparency Library shows who paid for political and social ads.</div>
+          <div class="si-tip">💡 Check the "About" section of pages sharing viral content — creation date matters.</div>
+          <div class="si-tip">💡 Reverse image search any photo before sharing — most viral hoaxes reuse old images.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent Facebook Flags</h2>
+        <div id="fb-flags"><div class="empty-state"><div class="icon">👥</div>No Facebook flags yet. Use the browser extension while on Facebook.</div></div>
+      </div>
+    </div>
+
+    <!-- INSTAGRAM PANEL -->
+    <div class="si-panel" id="si-panel-instagram">
+      <div class="card">
+        <h2>Instagram Content Verification</h2>
+        <div class="form-group">
+          <label>Search hashtag or claim</label>
+          <input type="text" id="ig-query" placeholder="E.g. #vaccine, #climatehoax, breaking news…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="ig-search">🔍 Search Instagram</button>
+          <button class="btn btn-sm btn-secondary" id="ig-reverse">🖼 Reverse Image Search</button>
+          <button class="btn btn-sm btn-secondary" id="ig-exif">📷 EXIF Checker</button>
+          <button class="btn btn-sm btn-secondary" id="ig-report">🚩 Report</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 Manipulated images often have inconsistent shadows and blurry text edges.</div>
+          <div class="si-tip">💡 Check follower-to-engagement ratio. Authentic accounts have 1 to 5% engagement per post.</div>
+          <div class="si-tip">💡 InVID and FotoForensics can detect image manipulation at pixel level.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent Instagram Flags</h2>
+        <div id="ig-flags"><div class="empty-state"><div class="icon">📸</div>No Instagram flags yet. Use the browser extension on Instagram.</div></div>
+      </div>
+    </div>
+
+    <!-- TIKTOK PANEL -->
+    <div class="si-panel" id="si-panel-tiktok">
+      <div class="card">
+        <h2>TikTok Trend Verification</h2>
+        <div class="form-group">
+          <label>Search trend, hashtag or claim</label>
+          <input type="text" id="tt-query" placeholder="E.g. #conspiracy, health claim, viral challenge…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="tt-search">🔍 Search TikTok</button>
+          <button class="btn btn-sm btn-secondary" id="tt-trending">🔥 Trending Now</button>
+          <button class="btn btn-sm btn-secondary" id="tt-research">📊 TikTok Research API</button>
+          <button class="btn btn-sm btn-secondary" id="tt-report">🚩 Report Centre</button>
+        </div>
+        <div class="si-tips">
+          <div class="si-tip">💡 TikTok's For You algorithm can amplify false content rapidly. Always check the creator's history.</div>
+          <div class="si-tip">💡 Watch for stock footage and AI-generated voice being used to fake news reports.</div>
+          <div class="si-tip">💡 The TikTok Research API gives academic access to public content for verification.</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent TikTok Flags</h2>
+        <div id="tt-flags"><div class="empty-state"><div class="icon">🎵</div>No TikTok flags yet. Use the browser extension on TikTok.</div></div>
+      </div>
+    </div>
+
+    <!-- AI ANALYSIS PANEL -->
+    <div class="si-panel" id="si-panel-ai">
+      <div class="card">
+        <h2>AI Claim Analysis</h2>
+        <p style="font-size:12px;color:var(--gray600);margin-bottom:14px;">Claude and Gemini analyse the claim and return a verdict, confidence score, red flags, and tips.</p>
+        <div class="form-group">
+          <label>Claim or post text</label>
+          <textarea id="ai-claim" rows="4" placeholder="Paste the claim, post caption, or headline you want analysed…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Platform context</label>
+            <select id="ai-platform">
+              <option value="general">General</option>
+              <option value="youtube">YouTube</option>
+              <option value="twitter">Twitter / X</option>
+              <option value="reddit">Reddit</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="substack">Substack</option>
+              <option value="facebook">Facebook</option>
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;">
+            <button class="btn" id="ai-analyze" style="width:100%;">🤖 Analyse Claim</button>
+          </div>
+        </div>
+
+        <div id="ai-loading" style="display:none;" class="ai-loading-state">
+          <div class="ai-spinner"></div>
+          <span id="ai-loading-msg">Connecting to Claude…</span>
+        </div>
+        <div id="ai-error" class="banner banner-error" style="display:none;margin-top:10px;"></div>
+
+        <div id="ai-result" style="display:none;margin-top:16px;">
+          <div class="ai-engine-badge" id="ai-engine-badge"></div>
+          <div class="ai-verdict-bar">
+            <div class="ai-verdict-label" id="ai-verdict"></div>
+            <div class="ai-confidence" id="ai-confidence"></div>
+          </div>
+          <div class="ai-score-track">
+            <div class="ai-score-fill" id="ai-score-fill"></div>
+          </div>
+          <div class="ai-summary" id="ai-summary"></div>
+          <div id="ai-flags-block" style="display:none;">
+            <div class="ai-section-label">Red flags detected</div>
+            <div class="ai-flags" id="ai-flags"></div>
+          </div>
+          <div id="ai-tips-block" style="display:none;">
+            <div class="ai-section-label">Verification tips</div>
+            <div class="ai-tips-list" id="ai-tips-list"></div>
+          </div>
+          <div id="ai-sources-block" style="display:none;margin-top:12px;">
+            <div class="ai-section-label">Fact-check sources</div>
+            <div id="ai-sources" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h2>Recent AI Analyses</h2>
+        <div id="ai-history-list"><div class="empty-state"><div class="icon">🤖</div>No analyses yet. Run your first claim check above.</div></div>
+      </div>
+    </div>
+
+    <!-- KEYWORDS PANEL -->
+    <div class="si-panel" id="si-panel-keywords">
+      <div class="card">
+        <h2>Keyword Monitor <span style="font-size:11px;font-weight:400;color:var(--gray400);margin-left:6px;">up to 5 keywords</span></h2>
+        <p style="font-size:12px;color:var(--gray600);margin-bottom:14px;">Track topics across platforms. Click a keyword to search all platforms at once or send it straight to AI analysis.</p>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <input type="text" id="kw-input" placeholder="Add a keyword or phrase and press Enter…" style="flex:1;">
+          <button class="btn btn-sm" id="kw-add">Add</button>
+        </div>
+        <div id="kw-list"></div>
+        <div id="kw-limit-msg" style="display:none;font-size:12px;color:var(--amber);margin-top:10px;">⚠ You have reached the 5-keyword limit. Remove one to add another.</div>
+      </div>
+      <div class="card" style="margin-top:12px;display:none;" id="kw-results-card">
+        <h2>Search platforms for: <span id="kw-active-term" style="color:var(--blue);">—</span></h2>
+        <div class="si-btn-row" id="kw-search-row" style="margin-bottom:0;"></div>
+      </div>
+    </div>
+
+    <!-- RESEARCH TOOLS PANEL -->
+    <div class="si-panel" id="si-panel-research">
+      <div class="card" style="margin-bottom:12px;">
+        <h2>Academic Research</h2>
+        <div class="si-research-grid">
+          <button class="si-research-btn" id="res-google-scholar">🎓 Google Scholar</button>
+          <button class="si-research-btn" id="res-pubmed">🧬 PubMed</button>
+          <button class="si-research-btn" id="res-arxiv">📄 arXiv Preprints</button>
+          <button class="si-research-btn" id="res-jstor">📚 JSTOR</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2>Quick Fact-Check</h2>
+        <div class="form-group">
+          <input type="text" id="si-query" placeholder="Enter a claim, headline or topic…">
+        </div>
+        <div class="si-btn-row">
+          <button class="btn btn-sm" id="si-google">🔍 Google Fact Check</button>
+          <button class="btn btn-sm btn-secondary" id="si-explorer">📋 FC Explorer</button>
+          <button class="btn btn-sm btn-secondary" id="si-fullfact">🌍 Full Fact</button>
+          <button class="btn btn-sm btn-secondary" id="si-africacheck">🌍 Africa Check</button>
+          <button class="btn btn-sm btn-secondary" id="si-snopes">🔎 Snopes</button>
+          <button class="btn btn-sm btn-secondary" id="si-politifact">⚖ PolitiFact</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2>Media Verification</h2>
+        <div class="si-research-grid">
+          <button class="si-research-btn" id="res-invid">🎬 InVID Video Verifier</button>
+          <button class="si-research-btn" id="res-tineye">🖼 TinEye Reverse Image</button>
+          <button class="si-research-btn" id="res-fotoforensics">🔬 FotoForensics</button>
+          <button class="si-research-btn" id="res-google-images">📷 Google Reverse Image</button>
+          <button class="si-research-btn" id="res-whoat">🌐 Who.is Domain Lookup</button>
+          <button class="si-research-btn" id="res-wayback">📚 Wayback Machine</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2>Fact-Check Databases</h2>
+        <div class="si-research-grid">
+          <button class="si-research-btn" id="res-poynter">📰 Poynter IFCN</button>
+          <button class="si-research-btn" id="res-duke">🎓 Duke Reporters Lab</button>
+          <button class="si-research-btn" id="res-firstdraft">📡 First Draft</button>
+          <button class="si-research-btn" id="res-claim-buster">🤖 ClaimBuster</button>
+          <button class="si-research-btn" id="res-opensecrets">💰 OpenSecrets</button>
+          <button class="si-research-btn" id="res-propublica">📊 ProPublica Data</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Recent Flagged Activity</h2>
+        <div id="si-recent-flags"><div class="empty-state">No flagged activity yet.</div></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- FACTPLAY -->
+  <section class="view" id="view-factplay">
+    <div class="fp-tab-bar">
+      <button class="fp-tab active" data-fptab="spotfake">🎯 Spot the Fake</button>
+      <button class="fp-tab" data-fptab="live">🏟️ Live Events</button>
+      <button class="fp-tab" data-fptab="radar">📡 Viral Radar</button>
+      <button class="fp-tab" data-fptab="screenshot">📸 Screenshot Check</button>
+      <button class="fp-tab" data-fptab="creator">🧑‍💻 Creator Credibility</button>
+      <button class="fp-tab" data-fptab="jobs">💼 Job Offer Check</button>
+      <button class="fp-tab" data-fptab="squad">🏆 Squad Mode</button>
+    </div>
+
+    <!-- Spot the Fake -->
+    <div id="fp-panel-spotfake" class="fp-panel active">
+      <div class="fp-stats-row" id="fp-sf-stats">
+        <div class="fp-stat"><span class="fp-stat-num" id="fp-sf-streak">–</span><span class="fp-stat-label">Day streak 🔥</span></div>
+        <div class="fp-stat"><span class="fp-stat-num" id="fp-sf-accuracy">–</span><span class="fp-stat-label">Accuracy</span></div>
+        <div class="fp-stat"><span class="fp-stat-num" id="fp-sf-played">–</span><span class="fp-stat-label">Rounds played</span></div>
+      </div>
+      <div class="fp-sf-meta-row">
+        <span id="fp-sf-xp" class="fp-sf-xp"></span>
+        <span id="fp-sf-badge" class="fp-sf-badge"></span>
+      </div>
+      <div id="fp-sf-game">
+        <div class="empty-state">Loading today's round…</div>
+      </div>
+    </div>
+
+    <!-- Live Event Fact-Check Rail -->
+    <div id="fp-panel-live" class="fp-panel">
+      <div class="card">
+        <p>Search a match, election or breaking event to see trending claims about it and jump straight into the conversation.</p>
+        <div style="display:flex;gap:8px;margin:12px 0;">
+          <input class="fp-input" id="fp-live-query" type="text" placeholder="e.g. Lakers vs Celtics, election results, storm warning…" style="flex:1;">
+          <button class="btn-primary" id="fp-live-search">🔍 Track this</button>
+        </div>
+      </div>
+      <div id="fp-live-results"></div>
+    </div>
+
+    <!-- Viral Radar -->
+    <div id="fp-panel-radar" class="fp-panel">
+      <div class="card">
+        <p>Claims currently being fact-checked right now — the earliest signal before something spikes across TikTok, X and Reddit.</p>
+      </div>
+      <div id="fp-radar-list"><div class="empty-state">Loading…</div></div>
+    </div>
+
+    <!-- Screenshot Check -->
+    <div id="fp-panel-screenshot" class="fp-panel">
+      <div class="card">
+        <p>Got a suspicious post as a screenshot? Preview it here, then trace it back to its real source.</p>
+        <input type="file" id="fp-ss-file" accept="image/*" style="margin:12px 0;">
+        <div id="fp-ss-preview"></div>
+        <div class="si-tools-grid" id="fp-ss-tools" style="display:none">
+          <a class="si-tool-card" id="fp-ss-google" target="_blank" rel="noopener">
+            <div class="si-tool-icon">🔎</div><div class="si-tool-name">Google Images</div>
+          </a>
+          <a class="si-tool-card" id="fp-ss-tineye" target="_blank" rel="noopener">
+            <div class="si-tool-icon">👁️</div><div class="si-tool-name">TinEye</div>
+          </a>
+          <a class="si-tool-card" id="fp-ss-yandex" target="_blank" rel="noopener">
+            <div class="si-tool-icon">🧭</div><div class="si-tool-name">Yandex</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creator Credibility -->
+    <div id="fp-panel-creator" class="fp-panel">
+      <div class="card">
+        <p>Before you trust a source, look them up. See their track record at a glance.</p>
+        <div style="display:flex;gap:8px;margin:12px 0;">
+          <input class="fp-input" id="fp-creator-query" type="text" placeholder="e.g. Reuters, BBC, Infowars…" style="flex:1;">
+          <button class="btn-primary" id="fp-creator-search">🔍 Check</button>
+        </div>
+        <div id="fp-creator-result"></div>
+      </div>
+    </div>
+
+    <!-- Job Offer Check -->
+    <div id="fp-panel-jobs" class="fp-panel">
+      <div class="card">
+        <p>Landed a job offer or recruiter message that feels off? Paste it below — we'll scan it for common scam red flags new graduates run into.</p>
+        <textarea id="fp-job-input" rows="6" placeholder="Paste the job posting, offer letter or recruiter message here…" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--gray200);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;margin:10px 0;"></textarea>
+        <button class="btn-primary" id="fp-job-check">🔍 Check This Job Post</button>
+        <div id="fp-job-result" style="margin-top:16px"></div>
+      </div>
+      <div class="card fp-job-checklist">
+        <h2>New Grad Safety Checklist</h2>
+        <ul>
+          <li>Research the company on LinkedIn and Glassdoor before replying</li>
+          <li>Verify the recruiter's profile and that emails come from a real company domain</li>
+          <li>Never pay a fee, deposit or "training cost" to get a job</li>
+          <li>Be cautious of interviews conducted only by text or chat apps</li>
+          <li>Don't share bank details or ID numbers before signing a real offer</li>
+          <li>If the pay sounds too good for the effort, verify it independently first</li>
+          <li>Confirm the role exists on the company's official careers page</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Squad Mode -->
+    <div id="fp-panel-squad" class="fp-panel">
+      <div class="card">
+        <p>Start a private group with friends or classmates. Everyone plays the same daily Spot the Fake round on their own time — the group shares one leaderboard ranked by streak and accuracy.</p>
+        <div class="fp-squad-actions">
+          <div class="fp-squad-box">
+            <div class="fp-squad-box-title">Create a squad</div>
+            <input class="fp-input" id="fp-squad-name" type="text" placeholder="Squad name, e.g. Room 204">
+            <button class="btn-primary" id="fp-squad-create">➕ Create Squad</button>
+          </div>
+          <div class="fp-squad-box">
+            <div class="fp-squad-box-title">Join a squad</div>
+            <input class="fp-input" id="fp-squad-code" type="text" placeholder="Invite code, e.g. AB12CD">
+            <button class="btn-primary" id="fp-squad-join">🔑 Join Squad</button>
+          </div>
+        </div>
+      </div>
+      <div id="fp-squad-list"></div>
+    </div>
+  </section>
+
+  <!-- HELP & SUPPORT -->
+  <section class="view" id="view-help">
+
+    <!-- 60-day special offer promo card -->
+    <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,#fefce8,#fff7ed);border:1px solid #fde68a;">
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="font-size:32px;flex-shrink:0;">🌟</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:4px;">Limited offer: 60 days Pro for €5</div>
+          <div style="font-size:13px;color:#78350f;line-height:1.6;margin-bottom:12px;">Get 100 AI fact-checks per day for 60 days — no recurring charge. After the period your account stays active on the free plan until you choose to upgrade further.</div>
+          <button class="btn" id="btn-promo60" style="background:linear-gradient(135deg,#d97706,#ea580c);border:none;color:#fff;font-weight:700;">
+            Get the 60-day offer →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do I connect the browser extension to this app? <span>▾</span></button>
+          <div class="faq-a">Install the FactChecker Pro Chrome extension from the Chrome Web Store. Once installed, the app automatically receives live page analysis data from the extension in real time. You will see activity appear in the Live Activity panel as you browse.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Why is my transparency score not updating? <span>▾</span></button>
+          <div class="faq-a">Your score updates when you submit and have claims verified or debunked. Click your profile name in the sidebar or go to Overview to see your latest score. If it still looks stale, sign out and sign back in to force a refresh.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do I upgrade to Pro? <span>▾</span></button>
+          <div class="faq-a">Visit <a href="https://ko-fi.com/factcheckerpro/tiers" style="color:#1d4ed8;">ko-fi.com/factcheckerpro/tiers</a> and choose a membership tier. Once payment confirms, sign back in here and your Pro status activates within a few minutes.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">The app shows "Network error". What does that mean? <span>▾</span></button>
+          <div class="faq-a">This means the app cannot reach the FactChecker Pro server. Check your internet connection, then click the Reload button in the topbar. If the problem continues, the backend service may be temporarily down — try again in a few minutes.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How is my data stored? <span>▾</span></button>
+          <div class="faq-a">Your account details and submitted claims are stored on our secure Railway-hosted server. Your local browsing history (from the extension) stays in your browser only and is never sent to our servers unless you explicitly submit a claim.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h2>Get the Browser Extension</h2>
+      <div class="ext-promo-strip" style="box-shadow:none;border:none;padding:0;">
+        <div class="eps-left">
+          <div class="eps-icon">🔍</div>
+          <div class="eps-body">
+            <strong class="eps-title">FactChecker Pro for Chrome</strong>
+            <p class="eps-desc">Real-time credibility scores, AI claim highlighting and social media shield on every page you browse.</p>
+          </div>
+        </div>
+        <a class="eps-cta" href="https://chrome.google.com/webstore/search/factchecker%20pro" id="help-install-btn">Install Free</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Contact Support</h2>
+      <p style="font-size:13px;color:var(--gray600);margin-bottom:16px;">Need help with something not covered above? Reach our team directly.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <a class="btn" href="mailto:info@factcheckerpro.net" style="text-decoration:none;">✉️ Email Support</a>
+        <a class="btn btn-secondary" href="https://factcheckerpro.net" style="text-decoration:none;">🌐 Website</a>
+        <a class="btn btn-secondary" href="https://ko-fi.com/factcheckerpro" style="text-decoration:none;">☕ Ko-fi</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODERATION -->
+  <section class="view" id="view-moderation">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="margin:0;">🛡️ Moderation Queue</h2>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="mod-count-lbl" style="font-size:13px;color:var(--gray600);">—</span>
+        <button class="btn btn-sm" id="mod-refresh">↻ Refresh</button>
+      </div>
+    </div>
+    <div id="mod-empty" style="display:none;text-align:center;padding:40px;color:var(--gray400);">✅ Queue is clear.</div>
+    <div id="mod-list"></div>
+  </section>
+
+
+  <!-- EVENTS -->
+  <section class="view" id="view-events">
+    <div class="events-intro card" style="margin-bottom:16px;">
+      <h2 style="margin-bottom:6px;">Upcoming Events</h2>
+      <p style="font-size:13px;color:var(--gray600);margin:0;">Webinars, live fact-checking workshops, and community Q&amp;As. Register below to secure your spot.</p>
+    </div>
+
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-date-badge">AUG<span>15</span></div>
+        <div class="event-body">
+          <div class="event-title">Deepfakes &amp; Synthetic Media: How to Spot Them</div>
+          <p class="event-desc">A live walkthrough of the latest AI-generated image, video and audio detection tools used by professional fact-checkers.</p>
+          <div class="event-meta">🕒 2:00 PM UTC &nbsp;·&nbsp; 🌍 Online Webinar</div>
+          <a class="event-register-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Register via WhatsApp →</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date-badge">SEP<span>5</span></div>
+        <div class="event-body">
+          <div class="event-title">Social Media Misinformation Workshop</div>
+          <p class="event-desc">Hands-on session covering claim verification on Twitter/X, TikTok and Facebook. Bring a claim and we will fact-check it live together.</p>
+          <div class="event-meta">🕒 3:00 PM UTC &nbsp;·&nbsp; 🌍 Online Workshop</div>
+          <a class="event-register-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Register via WhatsApp →</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date-badge">SEP<span>20</span></div>
+        <div class="event-body">
+          <div class="event-title">Community Q&amp;A with the FactChecker Pro Team</div>
+          <p class="event-desc">Open Q&amp;A where the FactChecker Pro team answers your questions about features, roadmap and fact-checking best practices.</p>
+          <div class="event-meta">🕒 1:00 PM UTC &nbsp;·&nbsp; 🌍 Live Stream</div>
+          <a class="event-register-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Join via WhatsApp →</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date-badge">SEP<span>28</span></div>
+        <div class="event-body">
+          <div class="event-title">Exhibition Fair — Meet FactChecker Pro in Person</div>
+          <p class="event-desc">FactChecker Pro will have its own desk at the exhibition fair. Stop by for a live demo, take the Spot the Fake challenge, and get help installing the extension on your own device.</p>
+          <div class="event-meta">📍 Venue to be announced &nbsp;·&nbsp; 🎪 In-person event</div>
+          <a class="event-register-btn" href="https://www.factcheckerpro.net/factchecker-pro-test-feedback" target="_blank" rel="noopener">Try the challenge now →</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-date-badge">OCT<span>10</span></div>
+        <div class="event-body">
+          <div class="event-title">Election Integrity &amp; Fact-Checking Panel</div>
+          <p class="event-desc">Journalists, researchers and civic tech experts discuss how to verify election-related claims and combat electoral misinformation.</p>
+          <div class="event-meta">🕒 4:00 PM UTC &nbsp;·&nbsp; 🌍 Online Panel</div>
+          <a class="event-register-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Register via WhatsApp →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="events-wa-card">
+      <div class="ewa-icon">💬</div>
+      <div class="ewa-body">
+        <strong>Never miss an event</strong>
+        <p>Join our WhatsApp Channel to get instant alerts when new events are announced, plus daily fact-check tips and FactChecker Pro news.</p>
+      </div>
+      <a class="wa-btn" href="https://whatsapp.com/channel/0029VbDvEEBG3R3l8Q0T9Z08" target="_blank" rel="noopener">Join Channel →</a>
+    </div>
+  </section>
+
+<script src="hub.js"></script>
+</body>
+</html>

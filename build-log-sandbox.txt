@@ -1,0 +1,6 @@
+
+> factchecker-pro-desktop@1.3.0 build:native-host
+> pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe
+
+> pkg@5.8.1
+EXIT:0

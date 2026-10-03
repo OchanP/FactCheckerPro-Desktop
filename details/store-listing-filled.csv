@@ -1,0 +1,81 @@
+Field,Type,English
+ProductName,Text,FactChecker Pro
+Description,Text,"FactChecker Pro is your personal fact-checking assistant that works alongside your browser to help you identify misinformation, verify claims, and research the credibility of sources in real time.
+
+Whether you are reading news articles, scrolling through social media, or researching a topic online, FactChecker Pro gives you the tools to think critically about what you see.
+
+Get an instant credibility score on any headline or claim using multiple AI engines including Google Fact Check Tools, Claude AI, and Gemini AI. See your browsing activity scored in real time and get notified when you land on a low-credibility site. Research claims across Twitter/X, Reddit, LinkedIn, YouTube, Facebook, Instagram, TikTok, and Substack from one unified Social Intelligence dashboard.
+
+Build your personal Transparency Score by submitting and verifying claims. Earn points, unlock badges, and rise on the community leaderboard. Join thousands of fact-checkers working together to fight misinformation.
+
+The desktop app works seamlessly with the FactChecker Pro browser extension, giving you a full-screen dashboard, system tray notifications, and persistent login across sessions.
+
+Free tier includes 5 AI analyses per day with full community access. Premium plans available for heavier use."
+WhatsNew,Text,Initial release of FactChecker Pro Desktop. Full-screen fact-checking dashboard, live browser activity feed, Social Intelligence research tools, community leaderboard, and seamless integration with the FactChecker Pro browser extension.
+ProductFeatures1,Text,Real-time AI fact-checking using Google Fact Check Tools, Claude AI, and Gemini AI
+ProductFeatures2,Text,Instant credibility score for any claim or headline
+ProductFeatures3,Text,Live browser activity feed with per-site credibility ratings
+ProductFeatures4,Text,Desktop notifications when you visit a low-credibility source
+ProductFeatures5,Text,Social Intelligence dashboard covering X/Twitter, Reddit, LinkedIn, YouTube, Facebook, Instagram, TikTok, and Substack
+ProductFeatures6,Text,Personal Transparency Score that grows as you verify claims
+ProductFeatures7,Text,Community leaderboard and badges for top fact-checkers
+ProductFeatures8,Text,Browse history analysis with exportable credibility reports
+ProductFeatures9,Text,System tray integration — runs quietly in the background
+ProductFeatures10,Text,Persistent login with Remember Me support
+ProductFeatures11,Text,Works with Chrome, Edge, Brave, Opera, Vivaldi, and other Chromium browsers
+ProductFeatures12,Text,Free tier with 5 AI analyses per day — no credit card required
+ProductFeatures13,Text,
+ProductFeatures14,Text,
+ProductFeatures15,Text,
+ProductFeatures16,Text,
+ProductFeatures17,Text,
+ProductFeatures18,Text,
+ProductFeatures19,Text,
+ProductFeatures20,Text,
+ShortDescription,Text,Fight misinformation with real-time AI fact-checking, credibility scores, and a community of truth-seekers working together.
+SearchTerms1,Text,fact checker
+SearchTerms2,Text,misinformation
+SearchTerms3,Text,fake news detector
+SearchTerms4,Text,credibility checker
+SearchTerms5,Text,AI fact check
+SearchTerms6,Text,media literacy
+SearchTerms7,Text,claim verification
+Applicable license terms,Text,This application requires a free FactChecker Pro account and connects to the FactChecker Pro cloud service. Premium subscription tiers are available at ko-fi.com/factcheckerpro. By installing you agree to use the app responsibly and in good faith.
+Copyright,Text,Copyright 2024-2026 FactChecker Pro. All rights reserved.
+DevelopedBy,Text,FactChecker Pro
+RequirementsMinimum1,Text,Windows 10 version 1903 or later
+RequirementsMinimum2,Text,4 GB RAM
+RequirementsMinimum3,Text,200 MB available disk space
+RequirementsMinimum4,Text,Internet connection required
+RequirementsMinimum5,Text,
+RequirementsMinimum6,Text,
+RequirementsMinimum7,Text,
+RequirementsMinimum8,Text,
+RequirementsMinimum9,Text,
+RequirementsMinimum10,Text,
+RequirementsMinimum11,Text,
+RequirementsRecommended1,Text,Windows 11
+RequirementsRecommended2,Text,8 GB RAM
+RequirementsRecommended3,Text,FactChecker Pro browser extension installed
+RequirementsRecommended4,Text,
+RequirementsRecommended5,Text,
+RequirementsRecommended6,Text,
+RequirementsRecommended7,Text,
+RequirementsRecommended8,Text,
+RequirementsRecommended9,Text,
+RequirementsRecommended10,Text,
+RequirementsRecommended11,Text,
+StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+HeroArts,Text,
+Trailers,Text,

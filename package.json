@@ -1,0 +1,80 @@
+{
+  "name": "factchecker-pro-desktop",
+  "version": "1.4.2",
+  "description": "FactChecker Pro — Windows companion app (account hub, notifications, manual claim checking)",
+  "main": "src/main/main.js",
+  "author": "FactChecker Pro",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build:native-host": "pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe",
+    "dist": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --arm64",
+    "dist:appx": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win appx --x64",
+    "dist:all": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis appx --x64",
+    "create-shortcut": "node scripts/create-shortcut.js"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "icon-gen": "^5.0.0",
+    "pkg": "^5.8.1",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.3"
+  },
+  "build": {
+    "appId": "com.factcheckerpro.desktop",
+    "productName": "FactChecker Pro",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "native-host/fc-native-host.exe",
+        "to": "native-host/fc-native-host.exe"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FactChecker Pro",
+      "installerIcon": "assets/icons/icon.ico",
+      "uninstallerIcon": "assets/icons/icon.ico",
+      "license": "assets/license.txt",
+      "artifactName": "FactCheckerPro-Setup-${arch}.exe"
+    },
+    "appx": {
+      "applicationId": "FactCheckerPro",
+      "identityName": "FactcheckerPro.FactcheckerProDesktop",
+      "publisher": "CN=10F9AFDB-A321-4E2D-8A1B-E6A0BC15F526",
+      "publisherDisplayName": "FactcheckerPro",
+      "displayName": "FactChecker Pro",
+      "backgroundColor": "#1E3A8A",
+      "showNameOnTiles": true,
+      "languages": ["en-US"]
+    }
+  }
+}

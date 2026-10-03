@@ -1,0 +1,47 @@
+
+> factchecker-pro-desktop@1.4.1 dist
+> npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --arm64
+
+
+> factchecker-pro-desktop@1.4.1 build:native-host
+> pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe
+
+> pkg@5.8.1
+  • electron-builder  version=25.1.8 os=10.0.26200
+  • loaded configuration  file=package.json ("build" field)
+  • executing @electron/rebuild  electronVersion=33.4.11 arch=x64 buildFromSource=false appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=33.4.11 appOutDir=release\win-unpacked
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\FactChecker Pro.exe
+  • signing with signtool.exe  path=release\win-unpacked\FactChecker Pro.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • executing @electron/rebuild  electronVersion=33.4.11 arch=arm64 buildFromSource=false appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=arm64 electron=33.4.11 appOutDir=release\win-arm64-unpacked
+  • updating asar integrity executable resource  executablePath=release\win-arm64-unpacked\FactChecker Pro.exe
+  • signing with signtool.exe  path=release\win-arm64-unpacked\FactChecker Pro.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building        target=nsis file=release\FactCheckerPro-Setup.exe archs=x64, arm64 oneClick=false perMachine=false
+  • signing with signtool.exe  path=release\win-arm64-unpacked\resources\elevate.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\win-unpacked\resources\elevate.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\__uninstaller-nsis-factchecker-pro-desktop.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\FactCheckerPro-Setup.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building block map  blockMapFile=release\FactCheckerPro-Setup.exe.blockmap
+  • building        target=nsis file=release\FactCheckerPro-Setup-x64.exe archs=x64 oneClick=false perMachine=false
+  • signing with signtool.exe  path=release\__uninstaller-nsis-factchecker-pro-desktop.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\FactCheckerPro-Setup-x64.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building block map  blockMapFile=release\FactCheckerPro-Setup-x64.exe.blockmap
+  • building        target=nsis file=release\FactCheckerPro-Setup-arm64.exe archs=arm64 oneClick=false perMachine=false
+  • signing with signtool.exe  path=release\__uninstaller-nsis-factchecker-pro-desktop.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\FactCheckerPro-Setup-arm64.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building block map  blockMapFile=release\FactCheckerPro-Setup-arm64.exe.blockmap
