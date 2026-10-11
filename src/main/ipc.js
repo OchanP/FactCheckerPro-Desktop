@@ -337,6 +337,17 @@ function registerIpc() {
       }
 
       // ── Podcast Search: directory lookup (iTunes Search API) ────────────────
+      // ── Generic API bridge used by renderer/hub/fcp-extras.js (podcasts, videos, jobs, credits...)
+      // Only paths under the FactChecker Pro API are allowed, and the auth token stays in the main process.
+      case 'FC_API': {
+        const path = String(msg.path || '');
+        if (!path.startsWith('/') || path.includes('..') || path.includes('//')) return { ok: false, status: 400, data: { error: 'Bad path' } };
+        const method = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(msg.method) ? msg.method : 'GET';
+        const opts = { method };
+        if (msg.body && method !== 'GET') opts.body = JSON.stringify(msg.body);
+        return await apiCall(path, opts);
+      }
+
       case 'FC_SEARCH_PODCASTS': {
         const { q='' } = msg;
         if (!q) return { ok:true, podcasts:[] };

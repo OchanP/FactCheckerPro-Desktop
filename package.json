@@ -1,6 +1,6 @@
 {
   "name": "factchecker-pro-desktop",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "FactChecker Pro — Windows companion app (account hub, notifications, manual claim checking)",
   "main": "src/main/main.js",
   "author": "FactChecker Pro",

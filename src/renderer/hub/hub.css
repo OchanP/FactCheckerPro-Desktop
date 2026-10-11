@@ -873,11 +873,14 @@ input:checked + .slider::before { transform: translateX(18px); }
 .ewnl-claim-source { font-size:12px; color:var(--gray600); }
 .ewnl-claim-link { font-size:12px; color:var(--blue); text-decoration:none; font-weight:600; margin-left:auto; }
 .ewnl-claim-link:hover { text-decoration:underline; }
-.ewnl-news-item { padding:8px 0; border-bottom:1px solid var(--gray100); font-size:12px; }
+.ewnl-news-item { display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--gray100); font-size:12px; }
 .ewnl-news-item:last-child { border-bottom:none; }
+.ewnl-news-item-body { flex:1; min-width:0; }
 .ewnl-news-item a { color:var(--gray900); text-decoration:none; font-weight:600; display:block; margin-bottom:2px; }
 .ewnl-news-item a:hover { color:var(--blue); }
 .ewnl-news-source { color:var(--gray600); font-size:11px; }
+.ewnl-news-thumb { width:48px; height:48px; border-radius:6px; object-fit:cover; flex-shrink:0; background:var(--gray100); }
+.ewnl-news-thumb--empty { display:flex; align-items:center; justify-content:center; font-size:18px; }
 
 /* ── Podcast Search ───────────────────────────────────────────────────── */
 .pod-results-grid {

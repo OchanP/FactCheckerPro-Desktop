@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json
 
 PackageIdentifier: FactcheckerPro.FactCheckerPro
-PackageVersion: 1.4.0
+PackageVersion: 1.5.0
 PackageLocale: en-US
 Publisher: FactChecker Pro
 PublisherUrl: https://factcheckerpro.net
@@ -29,12 +29,12 @@ Tags:
   - browser
   - journalism
 ReleaseNotes: |-
-  v1.4.0 - Election Watch NL
-  Adds Election Watch NL, a pilot panel built after a conversation with Dutch
-  election-disinformation researchers. It surfaces election-period claims sourced
-  specifically from Dutch-language fact-checkers via Google's Fact Check Tools API,
-  plus related NL-market news, rather than anything translated in from elsewhere.
+  v1.5.0 - Podcasts, News Videos and more
+  Adds a podcast player with search and top shows by topic, News Videos with a
+  history explorer by year and topic, Conflict Watch, Job Offer Check with job
+  leads, an Activity feed, credits you earn by taking part, reactions, a daily
+  poll and tip, and African countries in Election Watch Global.
   Fully backward-compatible with no changes to existing data or settings.
-ReleaseNotesUrl: https://github.com/OchanP/FactCheckerPro-Desktop/releases/tag/v1.4.0
+ReleaseNotesUrl: https://github.com/OchanP/FactCheckerPro-Desktop/releases/tag/v1.5.0
 ManifestType: defaultLocale
 ManifestVersion: 1.12.0

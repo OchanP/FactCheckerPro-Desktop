@@ -1802,12 +1802,23 @@ function renderEwnlNews(articles) {
     el.innerHTML = '<p style="font-size:12px;color:var(--gray600)">Geen recent nieuws gevonden.</p>';
     return;
   }
-  el.innerHTML = articles.map(a => `
+  el.innerHTML = articles.map(a => {
+    const thumb = a.image
+      ? `<img class="ewnl-news-thumb" src="${a.image}" alt="" loading="lazy" data-hide-on-error="1">`
+      : `<div class="ewnl-news-thumb ewnl-news-thumb--empty">📰</div>`;
+    return `
     <div class="ewnl-news-item">
-      <a href="${a.url || '#'}" target="_blank" rel="noopener">${escapeHtml(a.title || '')}</a>
-      <span class="ewnl-news-source">${escapeHtml(a.source?.name || 'GNews')}</span>
+      ${thumb}
+      <div class="ewnl-news-item-body">
+        <a href="${a.url || '#'}" target="_blank" rel="noopener">${escapeHtml(a.title || '')}</a>
+        <span class="ewnl-news-source">${escapeHtml(a.source?.name || 'GNews')}</span>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+  el.querySelectorAll('img[data-hide-on-error]').forEach(img => {
+    img.addEventListener('error', () => { img.outerHTML = '<div class="ewnl-news-thumb ewnl-news-thumb--empty">📰</div>'; });
+  });
 }
 
 async function loadElectionWatchNL(q) {
@@ -1879,12 +1890,23 @@ function renderEwgNews(articles) {
     el.innerHTML = '<p style="font-size:12px;color:var(--gray600)">No related news right now.</p>';
     return;
   }
-  el.innerHTML = articles.map(a => `
+  el.innerHTML = articles.map(a => {
+    const thumb = a.image
+      ? `<img class="ewnl-news-thumb" src="${a.image}" alt="" loading="lazy" data-hide-on-error="1">`
+      : `<div class="ewnl-news-thumb ewnl-news-thumb--empty">📰</div>`;
+    return `
     <div class="ewnl-news-item">
-      <a href="${a.url || '#'}" target="_blank" rel="noopener">${escapeHtml(a.title || '')}</a>
-      <span class="ewnl-news-source">${escapeHtml(a.source?.name || 'GNews')}</span>
+      ${thumb}
+      <div class="ewnl-news-item-body">
+        <a href="${a.url || '#'}" target="_blank" rel="noopener">${escapeHtml(a.title || '')}</a>
+        <span class="ewnl-news-source">${escapeHtml(a.source?.name || 'GNews')}</span>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+  el.querySelectorAll('img[data-hide-on-error]').forEach(img => {
+    img.addEventListener('error', () => { img.outerHTML = '<div class="ewnl-news-thumb ewnl-news-thumb--empty">📰</div>'; });
+  });
 }
 
 async function loadElectionWatchGlobal(q) {
