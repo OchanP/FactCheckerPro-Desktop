@@ -77,6 +77,20 @@ there too once that listing exists.
 If you touch `native-host/host.js`, re-run `npm run build:native-host`
 before testing — Chrome always spawns the compiled `.exe`, not the source.
 
+## Education edition
+
+The app opens into FactChecker Pro Education in Dutch or English. The classic hub stays available as the student toolbox (sidebar button and tray menu, "Classic tools").
+
+- Four roles: teacher, student, journalist, researcher.
+- Teachers create classes, share a join code, set assignments, create group boards, review with a 0 to 4 rubric, see pre and post results, and download progress and gradebook CSVs. Teaching assistants can review.
+- Students investigate in the workspace, work on evidence boards, use the citation assistant, take modules, join research studies and earn certificates.
+- Journalists and researchers use evidence boards, peer review, the citation assistant and research studies without needing a class.
+- Institutions: units, members, roles, seats, verified domain join, reports, audit log, API keys.
+- Code is in `src/renderer/edu/`. The backend is `/api/edu` in the server repo. Plan, scope and what is not built are in `EDUCATION_BUILD_PLAN.md`.
+- Automatic scores are advisory and never set a grade.
+
+Run with `npm start`. The server must be deployed first so `/api/edu` exists.
+
 ## Run it
 
 ```

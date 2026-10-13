@@ -14,19 +14,18 @@ if (!gotLock) {
   app.quit();
 } else {
   app.on('second-instance', () => {
-    const hub = windows.getHubWindow();
-    if (hub) {
+    const edu = windows.getEduWindow();
+    if (edu) {
       // The app stays alive in the tray after the window is closed, so a
       // relaunch (e.g. `npm start` during dev, or double-clicking the icon
       // again) would otherwise just refocus the SAME window instance with
-      // whatever hub.html/hub.js/hub.css it loaded last time — any edits
-      // made since then would silently not appear. Reload it so a relaunch
+      // whatever files it loaded last time. Reload it so a relaunch
       // always reflects the current files on disk.
-      hub.webContents.reload();
-      hub.show();
-      hub.focus();
+      edu.webContents.reload();
+      edu.show();
+      edu.focus();
     } else {
-      windows.openHubWindow();
+      windows.openEduWindow();
     }
   });
 
@@ -68,7 +67,7 @@ if (!gotLock) {
       // Try a silent refresh in the background; if it fails we still open the hub
       // and let the first API call handle the error gracefully.
       if (refreshToken) refreshAuthToken().catch(() => {});
-      windows.openHubWindow();
+      windows.openEduWindow();
     } else {
       windows.openAuthWindow();
     }
@@ -76,7 +75,7 @@ if (!gotLock) {
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         const { authToken: token } = store.get('sync', ['authToken']);
-        if (token) windows.openHubWindow();
+        if (token) windows.openEduWindow();
         else windows.openAuthWindow();
       }
     });

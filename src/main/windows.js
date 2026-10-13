@@ -100,4 +100,38 @@ function getHubWindow() {
   return hubWindow && !hubWindow.isDestroyed() ? hubWindow : null;
 }
 
-module.exports = { openAuthWindow, closeAuthWindow, openHubWindow, getHubWindow };
+// ── Education edition ──────────────────────────────────────────────────────
+// The education app is the main window of FactChecker Pro Education. The
+// classic hub (Claim Check, FactNews, FactPlay...) stays available as the
+// student toolbox and is opened from inside the education window.
+let eduWindow = null;
+
+function openEduWindow(view) {
+  if (eduWindow && !eduWindow.isDestroyed()) {
+    if (eduWindow.isMinimized()) eduWindow.restore();
+    eduWindow.focus();
+    if (view) eduWindow.webContents.send('fc:navigate', view);
+    return eduWindow;
+  }
+  eduWindow = new BrowserWindow(baseWindowOptions({
+    width: 1280,
+    height: 820,
+    minWidth: 940,
+    minHeight: 600,
+    title: 'FactChecker Pro Education'
+  }));
+  openLinksExternally(eduWindow);
+  eduWindow.loadFile(path.join(RENDERER_DIR, 'edu', 'edu.html'));
+  eduWindow.once('ready-to-show', () => eduWindow.show());
+  if (view) {
+    eduWindow.webContents.once('did-finish-load', () => eduWindow.webContents.send('fc:navigate', view));
+  }
+  eduWindow.on('closed', () => { eduWindow = null; });
+  return eduWindow;
+}
+
+function getEduWindow() {
+  return eduWindow && !eduWindow.isDestroyed() ? eduWindow : null;
+}
+
+module.exports = { openAuthWindow, closeAuthWindow, openHubWindow, getHubWindow, openEduWindow, getEduWindow };

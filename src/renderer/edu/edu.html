@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FactChecker Pro Education</title>
+<link rel="stylesheet" href="edu.css">
+</head>
+<body>
+<a class="skip-link" href="#view">Skip to main content</a>
+
+<div class="app" id="app">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <img class="brand-icon" src="../../../assets/icons/icon32.png" alt="">
+      <div>
+        <div class="brand-name">FactChecker Pro</div>
+        <div class="brand-sub">Education</div>
+      </div>
+    </div>
+    <div class="who" id="who" hidden>
+      <div class="who-avatar" id="who-avatar" aria-hidden="true">?</div>
+      <div class="who-text">
+        <div class="who-name" id="who-name">Loading</div>
+        <div class="who-role" id="who-role"></div>
+      </div>
+    </div>
+    <nav>
+      <ul class="nav" id="nav"></ul>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="lang-pick"><label for="lang-sel" class="sr-only">Language</label><select id="lang-sel" aria-label="Language"><option value="en">English</option><option value="nl">Nederlands</option></select></div>
+      <button class="nav-btn" id="btn-tools" type="button" hidden><span class="ico" aria-hidden="true">🧰</span> Classic tools</button>
+      <button class="nav-btn" id="btn-signout" type="button"><span class="ico" aria-hidden="true">🚪</span> Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main" id="view" tabindex="-1" aria-labelledby="view-title">
+    <div class="loading" role="status">Loading your workspace</div>
+  </main>
+</div>
+
+<div class="toast-host" id="toasts" aria-live="polite" aria-atomic="false"></div>
+<div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+<dialog id="dialog" class="dialog" aria-labelledby="dialog-title"></dialog>
+
+<script src="edu-core.js"></script>
+<script src="edu-nl.js"></script>
+<script src="edu-i18n.js"></script>
+<script src="edu-shared.js"></script>
+<script src="edu-teacher.js"></script>
+<script src="edu-student.js"></script>
+<script src="edu-boards.js"></script>
+<script src="edu-builder.js"></script>
+<script src="edu-admin.js"></script>
+<script src="edu-research.js"></script>
+<script src="edu-connect.js"></script>
+<script src="edu-app.js"></script>
+</body>
+</html>

@@ -10,7 +10,7 @@ function createTray() {
   tray = new Tray(iconPath);
   tray.setToolTip('FactChecker Pro');
   refreshMenu();
-  tray.on('click', () => windows.openHubWindow());
+  tray.on('click', () => windows.openEduWindow());
   return tray;
 }
 
@@ -22,7 +22,8 @@ function refreshMenu() {
   const menu = Menu.buildFromTemplate([
     { label: isLoggedIn ? `Signed in as ${apiUser?.display_name || apiUser?.username || 'user'}` : 'Not signed in', enabled: false },
     { type: 'separator' },
-    { label: 'Open FactChecker Pro', click: () => windows.openHubWindow() },
+    { label: 'Open FactChecker Pro Education', click: () => windows.openEduWindow() },
+    { label: 'Classic tools (Claim Check, FactNews...)', click: () => windows.openHubWindow() },
     { label: 'Check a Claim', click: () => windows.openHubWindow('check') },
     { label: 'Settings', click: () => windows.openHubWindow('settings') },
     { type: 'separator' },

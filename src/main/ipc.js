@@ -4,7 +4,9 @@
  * types (tied to a browser tab's DOM) are intentionally omitted; everything
  * that drives the account/hub experience is preserved.
  */
-const { ipcMain, shell, app, BrowserWindow } = require('electron');
+const { ipcMain, shell, app, BrowserWindow, dialog } = require('electron');
+const fs = require('fs');
+const pathMod = require('path');
 const store = require('./store');
 const { apiCall } = require('./api');
 const notifications = require('./notifications');
@@ -461,6 +463,31 @@ function registerIpc() {
         windows.openHubWindow('settings');
         return { ok: true };
 
+      case 'FC_OPEN_EDU':
+        windows.openEduWindow(msg.view);
+        return { ok: true };
+
+      // Education: save a report (CSV or JSON) chosen by the teacher. Only plain text, only to a path the user picks.
+      case 'FC_SAVE_FILE': {
+        const name = String(msg.filename || 'report.csv').replace(/[\\/:*?"<>|]/g, '_').slice(0, 80);
+        const ext = pathMod.extname(name).replace('.', '') || 'csv';
+        const content = String(msg.content == null ? '' : msg.content);
+        if (content.length > 5 * 1024 * 1024) return { ok: false, error: 'File is too large.' };
+        const win = BrowserWindow.fromWebContents(event.sender);
+        const pick = await dialog.showSaveDialog(win, {
+          title: 'Save report',
+          defaultPath: pathMod.join(app.getPath('documents'), name),
+          filters: [{ name: ext.toUpperCase(), extensions: [ext] }]
+        });
+        if (pick.canceled || !pick.filePath) return { ok: false, canceled: true };
+        try {
+          fs.writeFileSync(pick.filePath, content, 'utf8');
+          return { ok: true, path: pick.filePath };
+        } catch (e) {
+          return { ok: false, error: 'Could not save the file: ' + e.message };
+        }
+      }
+
       case 'FC_OPEN_AUTH':
         windows.openAuthWindow();
         return { ok: true };
@@ -501,7 +528,7 @@ function registerIpc() {
 
       case 'FC_AUTH_SUCCESS':
         windows.closeAuthWindow();
-        windows.openHubWindow();
+        windows.openEduWindow();
         return { ok: true };
 
       default:
