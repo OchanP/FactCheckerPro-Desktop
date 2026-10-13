@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json
 
 PackageIdentifier: FactcheckerPro.FactCheckerPro
-PackageVersion: 1.5.0
+PackageVersion: 1.6.0
 PackageLocale: en-US
 Publisher: FactChecker Pro
 PublisherUrl: https://factcheckerpro.net
@@ -29,12 +29,13 @@ Tags:
   - browser
   - journalism
 ReleaseNotes: |-
-  v1.5.0 - Podcasts, News Videos and more
-  Adds a podcast player with search and top shows by topic, News Videos with a
-  history explorer by year and topic, Conflict Watch, Job Offer Check with job
-  leads, an Activity feed, credits you earn by taking part, reactions, a daily
-  poll and tip, and African countries in Election Watch Global.
-  Fully backward-compatible with no changes to existing data or settings.
-ReleaseNotesUrl: https://github.com/OchanP/FactCheckerPro-Desktop/releases/tag/v1.5.0
+  v1.6.0 - Education edition
+  A new modern look with bolder text and livelier buttons, full Dutch language
+  support, and an Education edition for teachers, students, journalists and
+  researchers with classes, assignments, evidence boards and reviewed feedback.
+  Teachers can connect Google Classroom to import classes and send reviewed
+  scores back as drafts. Fully backward-compatible with no changes to existing
+  data or settings.
+ReleaseNotesUrl: https://github.com/OchanP/FactCheckerPro-Desktop/releases/tag/v1.6.0
 ManifestType: defaultLocale
 ManifestVersion: 1.12.0
