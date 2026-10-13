@@ -1,6 +1,6 @@
 {
   "name": "factchecker-pro-desktop",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "FactChecker Pro — Windows companion app (account hub, notifications, manual claim checking)",
   "main": "src/main/main.js",
   "author": "FactChecker Pro",
@@ -74,7 +74,7 @@
       "displayName": "FactChecker Pro",
       "backgroundColor": "#1E3A8A",
       "showNameOnTiles": true,
-      "languages": ["en-US"]
+      "languages": ["en-US", "nl-NL"]
     }
   }
 }

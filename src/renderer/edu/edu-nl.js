@@ -375,7 +375,7 @@
  "Medium": "Gemiddeld",
  "Member added": "Lid toegevoegd",
  "Members": "Leden",
- "Mine": "Mijn",
+ "Mine": "Van mij",
  "Minutes": "Minuten",
  "Misinformation trends": "Trends in desinformatie",
  "Module": "Module",
@@ -1062,6 +1062,11 @@
  "Publish this assignment to the course first.": "Publiceer deze opdracht eerst in de cursus.",
  "Only the class owner can do this.": "Alleen de eigenaar van de klas kan dit doen.",
  "This class is not linked to a course.": "Deze klas is niet gekoppeld aan een cursus.",
- "Google did not accept the sign in.": "Google heeft de inlog niet geaccepteerd."
+ "Google did not accept the sign in.": "Google heeft de inlog niet geaccepteerd.",
+ "Passed {0}": "Gehaald {0}",
+ "Passed: {0} of {1} correct ({2}%).": "Gehaald: {0} van {1} goed ({2}%).",
+ "Not yet: {0} of {1} correct ({2}%).": "Nog niet: {0} van {1} goed ({2}%).",
+ "Well done. This counts towards your competency profile.": "Goed gedaan. Dit telt mee voor je competentieprofiel.",
+ "Read the explanations below and try again. Your best score is kept.": "Lees de toelichting hieronder en probeer het opnieuw. Je beste score blijft bewaard."
 };
 })();
