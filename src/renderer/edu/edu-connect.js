@@ -1,4 +1,4 @@
-/* FactChecker Pro Education: learning platform connections (Google Classroom).
+/* FactChecker Pro Education: learning platform connections (Google Classroom, Microsoft Teams) and calendars (Google Calendar, Outlook).
    Tokens stay on the server. This file only starts the sign in, lists courses and asks the server to import, publish and send scores. */
 (function () {
   'use strict';
@@ -60,7 +60,7 @@
   }
 
   const cardHtml = `<div class="card mt" id="lms-card"><h2>Learning platforms</h2>
-      <p class="muted">Connect Google Classroom to import a course with its students, publish assignments there, and send your reviewed scores back as draft grades. Sign in happens in your browser. We never see your password and the app never holds the access token.</p>
+      <p class="muted">Connect Google Classroom or Microsoft Teams to import a class with its students and publish assignments there. Google Classroom can also take your reviewed scores back as draft grades. The same connection can put assignment deadlines in Google Calendar or Outlook. Sign in happens in your browser. We never see your password and the app never holds the access token.</p>
       <div id="lms-list"><div class="loading" role="status">Loading</div></div></div>`;
 
   // Teacher dashboard and settings get the card.
@@ -81,30 +81,49 @@
 
   /** Box on the class settings tab. */
   Edu.lmsClassBox = function (box, c) {
-    const linked = /^google:/.test(c.external_ref || '');
+    const linked = /^(google|microsoft):/.test(c.external_ref || '');
     box.innerHTML = linked
-      ? `<p class="muted small">This class is linked to a Google Classroom course. Sync adds students who joined the course since the last time.</p><button class="btn" id="lms-sync" type="button">Sync student list</button>`
-      : '<p class="muted small">Not linked. Import a course from the dashboard or from Settings to link a class to Google Classroom.</p>';
+      ? `<p class="muted small">This class is linked to a course on a learning platform. Sync adds students who joined the course since the last time.</p><button class="btn" id="lms-sync" type="button">Sync student list</button>`
+      : '<p class="muted small">Not linked. Import a course from the dashboard or from Settings to link a class to Google Classroom or Microsoft Teams.</p>';
     const b = $('#lms-sync');
     if (b) b.onclick = async () => {
       try { const r = await Edu.post('/classes/' + c.id + '/lms/sync'); const s = r.roster; Edu.toast(`Synced: ${s.added} joined, ${s.invited} invited.`); } catch (e) { Edu.toast(e.message, true); }
     };
   };
 
-  /** Dialog on an assignment: publish into the course and send scores. */
+  const CAL_NAMES = { google: 'Google Calendar', microsoft: 'Outlook' };
+
+  /** Dialog on an assignment: publish into the course, send scores and put the deadline in a calendar. */
   Edu.lmsAssignmentDialog = async function (a) {
-    const published = /^google:[^:]+:[^:]+/.test(a.external_ref || '');
+    const m = /^(google|microsoft):[^:]+:[^:]+/.exec(a.external_ref || '');
+    const published = !!m;
+    const canScore = !m || m[1] === 'google';   // Teams does not take scores from this app yet
+    let cals = [];
+    try { cals = (await Edu.get('/connectors')).connectors.filter(c => c.connected && c.calendar && c.calendar_ok); } catch (_) { /* the calendar part is optional */ }
+    const done = a.calendar_refs || {};
+    const free = cals.filter(c => !done[c.id]);
+    const calNote = !a.due_at ? 'Set a deadline on the assignment to add it to a calendar.'
+      : !cals.length ? 'To add the deadline to Google Calendar or Outlook, connect that account under Learning platforms. If you connected before, disconnect and connect again so calendar access is included.'
+      : !free.length ? 'The deadline is already in your calendar.' : 'Add the deadline to your calendar as a 30 minute event with a reminder.';
     const r = await Edu.dialog({
       title: 'Learning platform',
-      body: `<p class="muted small">${published ? 'This assignment is in the course.' : 'Publish this assignment as coursework in the linked course.'} Scores are sent as <b>drafts</b>. You return the work in the platform, so students only see grades when you decide. Only your own rubric scores are sent, never the automatic indicators.</p>
-        ${published ? '<label class="radio"><input type="checkbox" id="lms-rel"> <span>Also set as final grade (skip the draft step)</span></label>' : ''}`,
-      actions: [{ label: 'Close', value: null }, ...(published ? [{ label: 'Send reviewed scores', value: 'push' }] : [{ label: 'Publish to the course', value: 'pub' }])],
+      body: `<p class="muted small">${published ? 'This assignment is in the course.' : 'Publish this assignment as coursework in the linked course.'} ${canScore ? 'Scores are sent as <b>drafts</b>. You return the work in the platform, so students only see grades when you decide. Only your own rubric scores are sent, never the automatic indicators.' : 'Grade the work in Teams. Sending scores back from this app is not available for Teams yet.'}</p>
+        ${published && canScore ? '<label class="radio"><input type="checkbox" id="lms-rel"> <span>Also set as final grade (skip the draft step)</span></label>' : ''}
+        <p class="muted small mt">${calNote}</p>`,
+      actions: [{ label: 'Close', value: null },
+        ...(published ? (canScore ? [{ label: 'Send reviewed scores', value: 'push' }] : []) : [{ label: 'Publish to the course', value: 'pub' }]),
+        ...(a.due_at ? free.map(c => ({ label: 'Add deadline to ' + (CAL_NAMES[c.id] || c.label), value: 'cal:' + c.id })) : [])],
     });
     if (!r) return;
     try {
       if (r === 'pub') {
         const x = await Edu.post('/assignments/' + a.id + '/lms/publish', { lang: Edu.lang });
         a.external_ref = x.external_ref; Edu.toast('Published in the course.');
+      } else if (r.indexOf('cal:') === 0) {
+        const prov = r.slice(4);
+        await Edu.post('/assignments/' + a.id + '/calendar', { provider: prov, lang: Edu.lang });
+        a.calendar_refs = Object.assign({}, a.calendar_refs, { [prov]: true });
+        Edu.toast('Deadline added to ' + (CAL_NAMES[prov] || prov) + '.');
       } else {
         const rel = !!(document.getElementById('lms-rel') && document.getElementById('lms-rel').checked);
         const x = await Edu.post('/assignments/' + a.id + '/lms/push-grades', { release: rel });

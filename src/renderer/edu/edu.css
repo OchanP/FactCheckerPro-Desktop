@@ -308,7 +308,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 .tbl tr { transition: background .15s; }
 
 /* dialog and toast */
-.dialog { border-radius: 20px; animation: pop .26s var(--ease) both; }
+.dialog { border-radius: 20px; animation: pop .26s var(--ease) both; margin: auto; max-height: 90vh; overflow: auto; }
 .dialog::backdrop { background: rgba(15,23,42,.5); backdrop-filter: blur(5px); animation: fade .2s ease both; }
 .toast { border-radius: 14px; animation: slideIn .32s var(--ease) both; background: linear-gradient(135deg, #0f172a, #1e1b4b); }
 .toast.err { background: linear-gradient(135deg, #dc2626, #991b1b); }

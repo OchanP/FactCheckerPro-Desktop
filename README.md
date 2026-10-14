@@ -88,6 +88,7 @@ The app opens into FactChecker Pro Education in Dutch or English. The classic hu
 - Institutions: units, members, roles, seats, verified domain join, reports, audit log, API keys.
 - Code is in `src/renderer/edu/`. The backend is `/api/edu` in the server repo. Plan, scope and what is not built are in `EDUCATION_BUILD_PLAN.md`.
 - Automatic scores are advisory and never set a grade.
+- Classic tools link: "Open in classic tools" in the student workspace and on evidence boards opens Claim Check, Social Intel or FactNews in the hub window with the claim filled in (`src/renderer/edu/edu-tools.js`; the hub accepts `{ tab, text, url, sitab }` in `fc:navigate`).
 
 Run with `npm start`. The server must be deployed first so `/api/edu` exists.
 

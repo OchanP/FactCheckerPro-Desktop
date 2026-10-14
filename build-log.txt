@@ -1,9 +1,9 @@
 
-> factchecker-pro-desktop@1.4.2 dist:appx
+> factchecker-pro-desktop@1.6.0 dist:appx
 > npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win appx --x64
 
 
-> factchecker-pro-desktop@1.4.2 build:native-host
+> factchecker-pro-desktop@1.6.0 build:native-host
 > pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe
 
 > pkg@5.8.1
@@ -16,7 +16,7 @@
   • updating asar integrity executable resource  executablePath=release\win-unpacked\FactChecker Pro.exe
   • signing with signtool.exe  path=release\win-unpacked\FactChecker Pro.exe
   • no signing info identified, signing is skipped  signHook=false cscInfo=null
-  • building        target=AppX arch=x64 file=release\FactChecker Pro 1.4.2.appx
+  • building        target=AppX arch=x64 file=release\FactChecker Pro 1.6.0.appx
   • AppX is not signed  reason=Windows Store only build
-  • signing with signtool.exe  path=release\FactChecker Pro 1.4.2.appx
+  • signing with signtool.exe  path=release\FactChecker Pro 1.6.0.appx
   • no signing info identified, signing is skipped  signHook=false cscInfo=null

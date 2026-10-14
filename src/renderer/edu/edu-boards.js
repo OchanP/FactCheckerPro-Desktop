@@ -110,7 +110,7 @@
           <div class="field"><label for="f-claim">The claim</label><textarea id="f-claim" maxlength="1500" ${can ? '' : 'readonly'} style="min-height:4rem">${esc(b.claim_text || '')}</textarea></div>
           <div class="field"><label for="f-origin">Where did it come from?</label><input id="f-origin" type="text" maxlength="1500" ${can ? '' : 'readonly'} value="${esc(b.claim_origin || '')}"></div></div>
         <div class="card"><h2>2. Evidence</h2>
-          ${can ? '<div class="row mb"><button class="btn" id="add-ev" type="button">+ Add evidence</button></div>' : ''}
+          <div class="row mb">${can ? '<button class="btn" id="add-ev" type="button">+ Add evidence</button>' : ''}<button class="btn ghost" id="tools-board" type="button">Open in classic tools</button></div>
           <div class="cols2">${col('supporting', 'Supporting')}${col('contradicting', 'Contradicting')}</div>
           ${d.items.some(i => i.kind === 'context') ? col('context', 'Context') : ''}</div>
         <div class="card"><h2>3. Conclusion</h2>
@@ -144,6 +144,7 @@
       const find = id => d.items.find(i => i.id === id);
       const act = async (fn) => { try { await fn(); await draw(true); } catch (e) { Edu.toast(e.message, true); } };
       const save = async () => { await Edu.patch('/boards/' + b.id, { claim_text: $('#f-claim').value, claim_origin: $('#f-origin').value, conclusion: $('#f-concl').value, confidence: $('#f-conf').value, summary: $('#f-sum').value, unresolved: $('#f-unres').value }); };
+      $('#tools-board').onclick = () => Edu.openToolsDialog({ text: ($('#f-claim') && $('#f-claim').value) || b.claim_text || '' });
       if ($('#add-ev')) $('#add-ev').onclick = async () => { const r = await Edu.evidenceDialog(); if (r) act(() => Edu.post(`/boards/${b.id}/items`, r)); };
       $$('[data-edit]').forEach(x => x.onclick = async () => { const r = await Edu.evidenceDialog(find(x.dataset.edit)); if (r) act(() => Edu.patch(`/boards/${b.id}/items/${x.dataset.edit}`, r)); });
       $$('[data-rm]').forEach(x => x.onclick = async () => { if (await Edu.confirm('Remove evidence', 'Remove this evidence from the board?', 'Remove', true)) act(() => Edu.del(`/boards/${b.id}/items/${x.dataset.rm}`)); });

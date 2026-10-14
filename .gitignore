@@ -4,3 +4,4 @@ dist/
 *.log
 .DS_Store
 native-host/fc-native-host.exe
+Recordings/

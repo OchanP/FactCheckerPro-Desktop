@@ -71,7 +71,22 @@ document.querySelectorAll('.nav-item[data-nav]').forEach(el => {
 })();
 
 if (window.fc && window.fc.onNavigate) {
-  window.fc.onNavigate((tab) => navigate(tab));
+  window.fc.onNavigate((target) => {
+    // A plain string is a tab name. The education app can also send
+    // { tab, text, url, sitab } to open a tool with the claim or link filled in.
+    if (!target || typeof target === 'string') { navigate(target); return; }
+    navigate(target.tab || 'check');
+    try {
+      if (target.tab === 'check' || !target.tab) {
+        const t = document.getElementById('check-text'); if (t && target.text) { t.value = String(target.text).slice(0, 2000); t.dispatchEvent(new Event('input', { bubbles: true })); }
+        const u = document.getElementById('check-url'); if (u && target.url) u.value = String(target.url).slice(0, 2000);
+        if (t) t.focus();
+      }
+      if (target.tab === 'social' && target.sitab) {
+        const tab = document.querySelector('.si-tab[data-sitab="' + target.sitab + '"]'); if (tab) tab.click();
+      }
+    } catch (_) {}
+  });
 }
 
 // ── Sidebar profile ─────────────────────────────────────────────────────────

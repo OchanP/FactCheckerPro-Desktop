@@ -166,7 +166,7 @@
           <h3 class="mt">1. Gather evidence</h3>
           <p class="small muted">Look for evidence that supports the claim and evidence that challenges it. Note where each piece comes from and who stands behind it.</p>
           <div id="evlist">${c.evidence.map(evidenceHtml).join('')}</div>
-          ${c.evidence.length < 12 ? '<button class="btn ghost" type="button" id="add-ev">+ Add evidence</button>' : '<p class="small muted">You reached the limit of 12 pieces of evidence for this claim.</p>'}
+          <div class="row">${c.evidence.length < 12 ? '<button class="btn ghost" type="button" id="add-ev">+ Add evidence</button>' : '<p class="small muted">You reached the limit of 12 pieces of evidence for this claim.</p>'}<button class="btn ghost" type="button" id="tools-claim">Open in classic tools</button></div>
           <h3 class="mt">2. Reach a conclusion</h3>
           <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="sr-only">Conclusion for this claim</legend>
             ${concl.map(x => `<label class="radio"><input type="radio" name="concl" value="${x.key}" ${c.conclusion === x.key ? 'checked' : ''}> <span><b>${esc(x.label)}</b><br><span class="small muted">${esc(x.help || '')}</span></span></label>`).join('')}</fieldset>
@@ -182,6 +182,7 @@
       count();
       $$('#evlist [data-ef]').forEach(el => el.oninput = el.onchange = () => { c.evidence[Number(el.closest('[data-ev]').dataset.ev)][el.dataset.ef] = el.value; touch(); });
       $$('[data-rm-ev]').forEach(b => b.onclick = () => { c.evidence.splice(Number(b.dataset.rmEv), 1); touch(); paintClaim(); });
+      $('#tools-claim').onclick = () => Edu.openToolsDialog({ text: c.text });
       const add = $('#add-ev'); if (add) add.onclick = () => {
         c.evidence.push({ kind: 'supporting', title: '', url: '', source_type: 'news', reliability: '', ownership: '', published: '', note: '' });
         touch(); paintClaim(); const t = $$('#evlist [data-ef="title"]'); t[t.length - 1].focus();

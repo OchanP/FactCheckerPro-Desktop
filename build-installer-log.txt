@@ -1,9 +1,9 @@
 
-> factchecker-pro-desktop@1.5.0 dist
+> factchecker-pro-desktop@1.6.0 dist
 > npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --arm64
 
 
-> factchecker-pro-desktop@1.5.0 build:native-host
+> factchecker-pro-desktop@1.6.0 build:native-host
 > pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe
 
 > pkg@5.8.1
@@ -24,9 +24,9 @@
   • signing with signtool.exe  path=release\win-arm64-unpacked\FactChecker Pro.exe
   • no signing info identified, signing is skipped  signHook=false cscInfo=null
   • building        target=nsis file=release\FactCheckerPro-Setup.exe archs=x64, arm64 oneClick=false perMachine=false
-  • signing with signtool.exe  path=release\win-unpacked\resources\elevate.exe
-  • no signing info identified, signing is skipped  signHook=false cscInfo=null
   • signing with signtool.exe  path=release\win-arm64-unpacked\resources\elevate.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\win-unpacked\resources\elevate.exe
   • no signing info identified, signing is skipped  signHook=false cscInfo=null
   • signing with signtool.exe  path=release\__uninstaller-nsis-factchecker-pro-desktop.exe
   • no signing info identified, signing is skipped  signHook=false cscInfo=null

@@ -121,10 +121,10 @@
     const d = await Edu.get('/marketplace' + (q ? '?q=' + encodeURIComponent(q) : ''));
     Edu.render('Marketplace', `
       <div class="crumbs"><button type="button" id="crumb">Curriculum</button> / Marketplace</div>
-      <div class="page-head"><div><h1>Module marketplace</h1><p class="lead">Modules shared by other teachers, journalists and researchers. Copy one, then change it for your group.</p></div></div>
+      <div class="page-head"><div><h1>Module marketplace</h1><p class="lead">Ready made modules by FactChecker Pro on topics such as lateral reading, statistics, health, climate, elections, viral posts, scams and crisis news, in English and Dutch, plus modules shared by other teachers, journalists and researchers. Preview one, or copy it and change it for your group.</p></div></div>
       <div class="row mb"><label for="q" class="sr-only">Search</label><input id="q" type="search" placeholder="Search modules" value="${esc(q)}" style="flex:1"><button class="btn" id="go" type="button">Search</button></div>
-      ${d.modules.length ? `<div class="grid">${d.modules.map(m => `<div class="card"><h3>${esc(m.title)}</h3><p class="muted small">${esc(m.summary || '')}</p>
-        <div class="small muted">By ${esc(m.author)} · ${m.lessons} lessons · ${m.checks} questions · ${esc(m.lang === 'nl' ? 'Dutch' : 'English')} · ${esc(Edu.compName(m.competency))}${m.copies ? ` · copied ${m.copies}×` : ''}</div>
+      ${d.modules.length ? `<div class="grid">${d.modules.map(m => `<div class="card"><div class="row"><h3 class="spacer">${esc(m.title)}</h3>${m.featured ? Edu.chip('FactChecker Pro', 'purple') : ''}</div><p class="muted small">${esc(m.summary || '')}</p>
+        <div class="small muted">By ${esc(m.author)} · ${m.lessons} lessons · ${m.checks} questions · ${esc(m.lang === 'nl' ? 'Dutch' : 'English')} · ${esc(Edu.compName(m.competency))}${m.minutes ? ` · ${m.minutes} min` : ''}${m.copies ? ` · copied ${m.copies}×` : ''}</div>
         <div class="row mt"><button class="btn small" type="button" data-copy="${esc(m.id)}">Copy to my modules</button><button class="btn ghost small" type="button" data-view="${esc(m.id)}">Preview</button></div></div>`).join('')}</div>` : Edu.empty('🛒', 'Nothing here yet', 'No public modules match. You can share your own from My modules.', '')}`);
     $('#crumb').onclick = () => Edu.go('modules');
     const search = () => Edu.go('marketplace', { q: $('#q').value.trim() });
