@@ -36,6 +36,7 @@
     const admin = role === 'inst_admin', unitAdmin = admin || role === 'faculty_admin';
     const tabs = [['overview', 'Overview']];
     if (unitAdmin) tabs.push(['structure', 'Structure'], ['members', 'People']);
+    if (admin) tabs.push(['license', 'License']);
     if (admin) tabs.push(['domains', 'Email domains']);
     if (['inst_admin', 'faculty_admin', 'research_admin'].includes(role)) tabs.push(['report', 'Reports']);
     if (admin) tabs.push(['api', 'API keys'], ['audit', 'Audit log']);
@@ -43,6 +44,7 @@
     Edu.render(inst.name, `
       <div class="crumbs"><button type="button" id="crumb">Institutions</button> / ${esc(inst.name)}</div>
       <div class="page-head"><div><h1>${esc(inst.name)}</h1><p class="lead">${esc(ROLE_LABELS[role] || role)}</p></div></div>
+      ${licenseBanner(d.license, admin)}
       <div class="tabs" role="tablist" aria-label="Institution sections">${tabs.map(([k, l]) => `<button role="tab" type="button" data-tab="${k}" aria-selected="${tab === k}">${l}</button>`).join('')}</div>
       <div id="tab-body"></div>`);
     $('#crumb').onclick = () => Edu.go('institutions');
@@ -52,6 +54,7 @@
     if (tab === 'overview') return overview(body, d, reload);
     if (tab === 'structure') return structure(body, d, reload);
     if (tab === 'members') return members(body, d, reload);
+    if (tab === 'license') return licenseTab(body, d, reload);
     if (tab === 'domains') return domains(body, d, reload);
     if (tab === 'report') return report(body, d);
     if (tab === 'api') return apiKeys(body, d, reload);
@@ -65,7 +68,7 @@
       ${admin ? `<div class="card"><h2>Settings</h2>
         <div class="field"><label for="i-name">Name</label><input id="i-name" type="text" maxlength="160" value="${esc(i.name)}"></div>
         <div class="cols3">
-          <div class="field"><label for="i-seats">License seats <span class="hint">(0 means unlimited, ${i.seats_used} in use)</span></label><input id="i-seats" type="number" min="0" value="${esc(i.license_seats)}"></div>
+          <div class="field"><label for="i-seats">License seats <span class="hint">(0 means unlimited, ${i.seats_used} in use)</span></label><input id="i-seats" type="number" min="0" value="${esc(i.license_seats)}" ${d.license && d.license.status !== 'free' ? 'disabled title="Set by your license"' : ''}></div>
           <div class="field"><label for="i-ret">Longest time student work is kept</label><select id="i-ret">${[[90, '90 days'], [180, '6 months'], [365, '1 year'], [730, '2 years'], [1825, '5 years']].map(([v, l]) => `<option value="${v}" ${i.default_retention_days === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
           <div class="field"><label for="i-color">Brand colour</label><input id="i-color" type="text" placeholder="#1f5f8b" maxlength="7" value="${esc(i.brand_color || '')}"></div></div>
         <label class="radio"><input id="i-join" type="checkbox" ${i.domain_join ? 'checked' : ''}> <span><b>Join automatically by email domain</b><br><span class="muted small">People who sign in with an email on a verified domain join as teacher or student, as chosen in their profile. Seats still apply.</span></span></label>
@@ -73,8 +76,86 @@
         <p class="small muted mt">The retention limit applies to every class attached to this institution. A class can keep work for a shorter time, never longer.</p></div>` : `<div class="card"><h2>Privacy settings</h2><p>Student work in this institution is kept at most ${i.default_retention_days} days.</p></div>`}
       <div class="card"><h2>Your classes</h2><p class="muted small">Attach a class to a unit from the class settings tab. Reports group classes by unit.</p></div>`;
     const s = $('#save'); if (s) s.onclick = async () => {
-      try { await Edu.patch('/institutions/' + i.id, { name: $('#i-name').value, license_seats: Number($('#i-seats').value) || 0, default_retention_days: Number($('#i-ret').value), brand_color: $('#i-color').value.trim() || null, domain_join: $('#i-join').checked }); Edu.toast('Saved'); reload(); } catch (e) { Edu.toast(e.message, true); }
+      try { await Edu.patch('/institutions/' + i.id, { name: $('#i-name').value, license_seats: d.license && d.license.status !== 'free' ? i.license_seats : Number($('#i-seats').value) || 0, default_retention_days: Number($('#i-ret').value), brand_color: $('#i-color').value.trim() || null, domain_join: $('#i-join').checked }); Edu.toast('Saved'); reload(); } catch (e) { Edu.toast(e.message, true); }
     };
+  }
+
+  // ── license ───────────────────────────────────────────────────────────────
+  function licenseBanner(l, admin) {
+    if (!l) return '';
+    let msg = '', cls = 'warn';
+    if (l.status === 'expired') { msg = 'The license has ended. Everything stays readable, but nobody can be added and the structure cannot change until it is renewed.'; cls = 'bad'; }
+    else if (l.status === 'grace') msg = 'The license has ended and is in a short grace period. Renew it to avoid the institution becoming read only.';
+    else if (l.status === 'active' && l.days_left != null && l.days_left <= 30) msg = 'The license ends in ' + l.days_left + ' days. Renew it to keep adding people.';
+    if (!msg) return '';
+    return `<div class="note ${cls}" role="status" style="margin-bottom:14px"><b>${Edu.t('License')}:</b> ${Edu.t(msg)}${admin ? ' <button class="link" type="button" data-tab="license">' + Edu.t('Open license') + '</button>' : ''}</div>`;
+  }
+  const PLAN_LABELS = { free: 'Free', pilot: 'Pilot', school: 'School', campus: 'Campus' };
+  const STATUS_LABELS = { free: 'Free tier', active: 'Active', grace: 'Grace period', expired: 'Ended' };
+  const fmtDate = x => x ? new Date(x).toLocaleDateString(Edu.lang === 'nl' ? 'nl-NL' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+  async function licenseTab(body, d, reload) {
+    const id = d.institution.id;
+    const { license: l } = await Edu.get(`/institutions/${id}/license`);
+    const tone = { active: 'ok', free: '', grace: 'warn', expired: 'bad' }[l.status];
+    const pct = l.seats ? Math.min(100, Math.round(100 * l.seats_used / l.seats)) : 0;
+    body.innerHTML = `
+      <div class="card"><div class="row"><h2 class="spacer" style="margin:0">License</h2>${Edu.chip(STATUS_LABELS[l.status], tone)}</div>
+        <div class="cols3 mt">
+          <div><div class="muted small">Plan</div><b>${esc(Edu.t(PLAN_LABELS[l.plan] || l.plan))}</b></div>
+          <div><div class="muted small">${l.status === 'free' ? 'Ends' : l.status === 'active' ? 'Ends on' : 'Ended on'}</div><b>${l.expires_at ? esc(fmtDate(l.expires_at)) : esc(Edu.t('No end date'))}</b>${l.status === 'active' ? `<div class="muted small">${l.days_left + ' days left'}</div>` : ''}${l.status === 'grace' ? `<div class="muted small">${l.grace_days_left + ' days of grace left'}</div>` : ''}</div>
+          <div><div class="muted small">Seats</div><b>${l.seats_used}${l.seats ? ' / ' + l.seats : ''}</b>${l.seats ? `<div class="bar mt" aria-hidden="true"><span style="width:${pct}%"></span></div>` : `<div class="muted small">${Edu.t('Unlimited on the free tier')}</div>`}</div>
+        </div>
+        <p class="muted small mt">${'A seat is one person in the institution: teacher, student or administrator. When a license ends, nothing is deleted. After a grace period of ' + l.grace_days + ' days the institution becomes read only until it is renewed.'}</p>
+        <div class="row mt">
+          ${l.pilot_available ? `<button class="btn" id="lic-pilot" type="button">${Edu.t('Start a free pilot')}</button>` : ''}
+          <button class="btn ${l.pilot_available ? 'ghost' : ''}" id="lic-redeem" type="button">${Edu.t('Enter a license key')}</button>
+          <a class="btn ghost" href="mailto:info@factcheckerpro.net?subject=${encodeURIComponent('License request: ' + d.institution.name)}" id="lic-mail">${Edu.t('Request a license')}</a>
+        </div>
+        ${l.pilot_available ? `<p class="small muted mt">${Edu.t('The free pilot gives 50 seats for 60 days. It can be started once.')}</p>` : ''}
+      </div>
+      <div id="owner-box"></div>`;
+    const pilot = $('#lic-pilot'); if (pilot) pilot.onclick = async () => {
+      if (!(await Edu.confirm('Start a free pilot', 'This gives 50 seats for 60 days. It can only be started once for this institution.', 'Start pilot'))) return;
+      try { await Edu.post(`/institutions/${id}/license/pilot`, {}); Edu.toast('Pilot started'); reload('license'); } catch (e) { Edu.toast(e.message, true); }
+    };
+    $('#lic-redeem').onclick = async () => {
+      const code = await Edu.prompt('Enter a license key', 'Key', '');
+      if (!code) return;
+      try { await Edu.post(`/institutions/${id}/license/redeem`, { code: code.trim() }); Edu.toast('License activated'); reload('license'); } catch (e) { Edu.toast(e.message, true); }
+    };
+    const mail = $('#lic-mail'); if (mail) mail.onclick = e => { e.preventDefault(); try { window.open(mail.href); } catch (_) {} };
+    ownerTools($('#owner-box'), d, reload);
+  }
+
+  /** Shown only to the FactChecker Pro owner: the server answers 403 to everyone else. */
+  async function ownerTools(box, d, reload) {
+    let keys; try { keys = (await Edu.get('/license/admin/keys')).keys; } catch (_) { return; }
+    const id = d.institution.id;
+    box.innerHTML = `<div class="card"><h2>Owner tools</h2>
+      <p class="muted small">Only you can see this. Issue keys for institutions, or set the license on this institution directly after an invoice is paid.</p>
+      <div class="row"><button class="btn" id="own-key" type="button">Create license keys</button><button class="btn ghost" id="own-set" type="button">Set license on this institution</button><button class="btn ghost" id="own-end" type="button">End license now</button></div>
+      <div class="mt" id="own-new"></div>
+      ${keys.length ? `<table class="tbl mt"><thead><tr><th>Key</th><th>Plan</th><th>Seats</th><th>Days</th><th>Status</th><th></th></tr></thead><tbody>${keys.map(k => `<tr><td><code>${esc(k.code)}</code></td><td>${esc(k.plan)}</td><td>${k.seats}</td><td>${k.days}</td><td>${k.revoked ? 'Revoked' : k.redeemed_at ? 'Used by ' + esc(k.institution || 'an institution') : 'Unused'}</td><td>${!k.revoked && !k.redeemed_at ? `<button class="btn ghost small" type="button" data-rev="${esc(k.code)}">Revoke</button>` : ''}</td></tr>`).join('')}</tbody></table>` : ''}
+    </div>`;
+    const planSel = `<div class="field"><label for="o-plan">Plan</label><select id="o-plan"><option value="school">School</option><option value="campus">Campus</option><option value="pilot">Pilot</option></select></div>`;
+    const form = (extra) => `${planSel}<div class="cols3"><div class="field"><label for="o-seats">Seats</label><input id="o-seats" type="number" min="1" value="100"></div><div class="field"><label for="o-days">Days</label><input id="o-days" type="number" min="1" value="365"></div>${extra}</div>`;
+    const read = dd => ({ plan: dd.querySelector('#o-plan').value, seats: Number(dd.querySelector('#o-seats').value), days: Number(dd.querySelector('#o-days').value) });
+    $('#own-key').onclick = async () => {
+      const r = await Edu.dialog({ title: 'Create license keys', body: form('<div class="field"><label for="o-count">How many keys</label><input id="o-count" type="number" min="1" max="50" value="1"></div>') + '<div class="field"><label for="o-note">Note (who it is for)</label><input id="o-note" type="text" maxlength="200"></div>', actions: [{ label: 'Cancel', value: null }, { label: 'Create', value: 'ok', validate: dd => Object.assign(read(dd), { count: Number(dd.querySelector('#o-count').value), note: dd.querySelector('#o-note').value.trim() }) }] });
+      if (!r) return;
+      try { const o = await Edu.post('/license/admin/keys', r); $('#own-new').innerHTML = `<div class="note ok"><b>New keys</b> (copy them now, send one to the institution)<br>${o.keys.map(k => '<code>' + esc(k.code) + '</code>').join('<br>')}</div>`; } catch (e) { Edu.toast(e.message, true); }
+    };
+    $('#own-set').onclick = async () => {
+      const r = await Edu.dialog({ title: 'Set license on this institution', body: form('<div class="field"><label for="o-contact">Contact email</label><input id="o-contact" type="text" maxlength="255"></div>'), actions: [{ label: 'Cancel', value: null }, { label: 'Set license', value: 'ok', validate: dd => Object.assign(read(dd), { contact: dd.querySelector('#o-contact').value.trim() || undefined }) }] });
+      if (!r) return;
+      try { await Edu.post(`/license/admin/institutions/${id}`, r); Edu.toast('License set'); reload('license'); } catch (e) { Edu.toast(e.message, true); }
+    };
+    $('#own-end').onclick = async () => {
+      if (!(await Edu.confirm('End license now', 'The institution goes into the grace period and then becomes read only.', 'End license', true))) return;
+      try { await Edu.post(`/license/admin/institutions/${id}/end`, {}); reload('license'); } catch (e) { Edu.toast(e.message, true); }
+    };
+    $$('[data-rev]').forEach(b => b.onclick = async () => { try { await Edu.post(`/license/admin/keys/${b.dataset.rev}/revoke`, {}); reload('license'); } catch (e) { Edu.toast(e.message, true); } });
   }
 
   function structure(body, d, reload) {

@@ -205,6 +205,7 @@
         <div class="field"><label for="lang">Language</label><select id="lang"><option value="en" ${Edu.lang === 'en' ? 'selected' : ''}>English</option><option value="nl" ${Edu.lang === 'nl' ? 'selected' : ''}>Nederlands</option></select></div>
         <p class="small muted">Keyboard: use <kbd>Tab</kbd> to move, <kbd>Enter</kbd> or <kbd>Space</kbd> to activate. Press <kbd>Esc</kbd> to close a dialog.</p>
       </div>
+      ${window.EduTheme ? EduTheme.panel() : ''}
       <div class="card"><h2>Your account</h2>
         <p><b>${esc(me.user.username)}</b> (${esc(me.user.email || '')})</p>
         <p class="muted small">Role: ${esc(p.role || 'not chosen')}${p.org_name ? ' at ' + esc(p.org_name) : ''}</p>
@@ -224,6 +225,7 @@
     $('#scale').oninput = () => { $('#scale-val').textContent = $('#scale').value; Edu.applyDisplay($('#scale').value, $('#hc').checked); };
     $('#scale').onchange = save; $('#hc').onchange = save;
     $('#lang').onchange = e => Edu.setLang(e.target.value);
+    if (window.EduTheme) EduTheme.bind(document);
     $('#switch-role').onclick = async () => {
       const r = await Edu.dialog({ title: 'Change my role', body: '<p class="muted small">You can only change your role while you have no classes. A role changes which tools you see.</p><div class="field"><label for="nr">New role</label><select id="nr"><option value="teacher">Teacher</option><option value="student">Student</option><option value="journalist">Journalist</option><option value="researcher">Researcher</option></select></div>', actions: [{ label: 'Cancel', value: null }, { label: 'Change role', value: 'ok', validate: d => d.querySelector('#nr').value }] });
       if (!r) return;

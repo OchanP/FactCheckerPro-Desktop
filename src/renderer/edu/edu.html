@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FactChecker Pro Education</title>
 <link rel="stylesheet" href="edu.css">
+<link rel="stylesheet" href="edu-theme.css">
 </head>
 <body>
 <a class="skip-link" href="#view">Skip to main content</a>
@@ -30,6 +31,7 @@
     </nav>
     <div class="sidebar-foot">
       <div class="lang-pick"><label for="lang-sel" class="sr-only">Language</label><select id="lang-sel" aria-label="Language"><option value="en">English</option><option value="nl">Nederlands</option></select></div>
+      <button class="nav-btn" id="btn-theme" type="button" aria-pressed="false"><span class="ico" aria-hidden="true">🌙</span> <span class="lbl">Dark mode</span></button>
       <button class="nav-btn" id="btn-tools" type="button" hidden><span class="ico" aria-hidden="true">🧰</span> Classic tools</button>
       <button class="nav-btn" id="btn-signout" type="button"><span class="ico" aria-hidden="true">🚪</span> Sign out</button>
     </div>
@@ -47,6 +49,7 @@
 <script src="edu-core.js"></script>
 <script src="edu-nl.js"></script>
 <script src="edu-i18n.js"></script>
+<script src="edu-theme.js"></script>
 <script src="edu-shared.js"></script>
 <script src="edu-teacher.js"></script>
 <script src="edu-student.js"></script>
