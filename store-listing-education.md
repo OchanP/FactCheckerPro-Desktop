@@ -1,10 +1,10 @@
-# Store update: FactChecker Pro Education (version 1.6.0.0)
+# Store update: FactChecker Pro Education (version 1.7.0.0)
 
 ## How to submit
 
 Yes, ship this as an update to the same Store listing. Do not create a new app.
 
-1. Run `build-msix.bat` (or `npm run dist:appx`). The new file appears in `release/` as FactChecker Pro 1.6.0.appx. The version is 1.6.0, and the Store needs the fourth number to be 0, so it becomes 1.6.0.0. It is higher than everything submitted before.
+1. Run `build-msix.bat` (or `npm run dist:appx`). The new file appears in `release/` as FactChecker Pro 1.7.0.appx. The version is 1.7.0, and the Store needs the fourth number to be 0, so it becomes 1.7.0.0. It is higher than everything submitted before.
 2. In Partner Center open your app, then Start update, then Packages. Upload the new appx.
 3. Under Store listings add Dutch (Netherlands) next to English. Paste the texts below. Replace the screenshots with the ones in `store-assets/screenshots` (files starting with en- for English, nl- for Dutch).
 4. Update the age rating questionnaire. The app now handles classes and student work.
@@ -31,7 +31,7 @@ Available in English and Dutch. Your data stays yours, and you can export or del
 
 **What's new in this version**
 
-A new modern look with smoother buttons and clearer text. Full Dutch language support. Connect Google Classroom to import classes and send reviewed scores. Teams and Canvas follow later.
+Connect Microsoft Teams and Outlook next to Google Classroom and Google Calendar: import classes, publish assignments and add deadlines to your calendar. Choose light, dark or your device setting, pick an accent colour and a card style, including floating cards. Institutions can start a free pilot and use licenses with seat limits. Canvas follows later.
 
 **Features**
 
@@ -43,6 +43,9 @@ A new modern look with smoother buttons and clearer text. Full Dutch language su
 - Honest AI use disclosure
 - Citation assistant
 - Google Classroom import, publish and draft grades
+- Microsoft Teams and Outlook, Google Calendar deadlines
+- Light and dark themes, accent colours, floating cards
+- Institution licenses with a free pilot
 - English and Dutch
 - Export and delete your data
 
@@ -68,7 +71,7 @@ Beschikbaar in het Nederlands en Engels. Je gegevens blijven van jou, en je kunt
 
 **Wat is er nieuw in deze versie**
 
-Een nieuwe moderne look met soepelere knoppen en duidelijkere tekst. Volledige Nederlandse taalondersteuning. Koppel Google Classroom om klassen te importeren en beoordeelde scores terug te sturen. Teams en Canvas volgen later.
+Koppel Microsoft Teams en Outlook naast Google Classroom en Google Agenda: importeer klassen, publiceer opdrachten en zet deadlines in je agenda. Kies licht, donker of de instelling van je apparaat, een accentkleur en een kaartstijl, ook zwevende kaarten. Instellingen kunnen een gratis pilot starten en werken met licenties met een maximum aantal plaatsen. Canvas volgt later.
 
 **Functies**
 
@@ -80,6 +83,9 @@ Een nieuwe moderne look met soepelere knoppen en duidelijkere tekst. Volledige N
 - Eerlijke melding van AI-gebruik
 - Bronvermeldingshulp
 - Google Classroom: importeren, publiceren en conceptcijfers
+- Microsoft Teams en Outlook, deadlines in Google Agenda
+- Licht en donker thema, accentkleuren, zwevende kaarten
+- Instellingslicenties met een gratis pilot
 - Nederlands en Engels
 - Gegevens exporteren en verwijderen
 
