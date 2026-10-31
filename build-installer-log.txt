@@ -1,13 +1,13 @@
 
-> factchecker-pro-desktop@1.6.0 dist
+> factchecker-pro-desktop@1.8.0 dist
 > npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --arm64
 
 
-> factchecker-pro-desktop@1.6.0 build:native-host
+> factchecker-pro-desktop@1.8.0 build:native-host
 > pkg native-host/host.js --target node18-win-x64 --output native-host/fc-native-host.exe
 
 > pkg@5.8.1
-  • electron-builder  version=25.1.8 os=10.0.26200
+  • electron-builder  version=25.1.8 os=10.0.26300
   • loaded configuration  file=package.json ("build" field)
   • executing @electron/rebuild  electronVersion=33.4.11 arch=x64 buildFromSource=false appDir=./
   • installing native dependencies  arch=x64

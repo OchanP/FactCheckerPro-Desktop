@@ -18,6 +18,12 @@
   const BACKEND = 'https://factchecker-pro-production.up.railway.app';
   const LANG = ((navigator.language || 'en').slice(0, 2) || 'en').toLowerCase();
 
+  // The language picked in the app (the dashboard language switch), falling back to the browser language.
+  async function appLang() {
+    try { if (typeof fcpGetLang === 'function') { const l = await fcpGetLang(); if (l) return String(l).slice(0, 2).toLowerCase(); } } catch (_) {}
+    return LANG;
+  }
+
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; };
@@ -141,6 +147,42 @@
 .fx-brief{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border-color:#c7d2fe}
 .fx-unread{border-left:4px solid #1d4ed8}
 body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
+.fx-ad{display:flex;align-items:center;gap:12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:8px 12px;margin:0 0 12px;font-size:13px;color:#0f172a}
+.fx-ad img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.fx-ad .tx{flex:1;min-width:0;line-height:1.35}
+.fx-ad .lb{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:700}
+.fx-ad .tx span:not(.lb){color:#475569}
+.fx-ad .fx-btn{padding:7px 13px;font-size:12.5px;white-space:nowrap}
+.fx-tip-ad{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12.5px}
+.fx-tip-ad .lb{font-size:10.5px;font-weight:800;text-transform:uppercase;color:#64748b}
+.fx-tip-ad div{flex:1;min-width:140px}
+.fx-lg-strip{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#eff6ff;border-radius:12px;padding:8px 14px;margin:0 0 12px;font-size:13px}
+.fx-lg-hero{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.fx-tier{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:800;font-size:13px;color:#fff}
+.fx-tier.t0{background:#b45309}.fx-tier.t1{background:#64748b}.fx-tier.t2{background:#ca8a04}.fx-tier.t3{background:#0e7490}.fx-tier.t4{background:#7c3aed}
+.fx-lg-stats{display:flex;gap:18px;flex-wrap:wrap}.fx-lg-stats div{text-align:center}.fx-lg-stats b{display:block;font-size:22px;color:#0f172a}
+.fx-tabs{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.fx-tabs button{border:0;background:#e2e8f0;color:#0f172a;border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:13px}
+.fx-tabs button.on{background:#1d4ed8;color:#fff}
+.fx-q{font-size:17px;line-height:1.45;font-weight:600;margin:6px 0 14px}
+.fx-tf{display:flex;gap:10px}.fx-tf .fx-btn{flex:1;padding:12px}
+.fx-pics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fx-pics button{border:3px solid transparent;border-radius:12px;padding:0;overflow:hidden;cursor:pointer;background:#e2e8f0}
+.fx-pics img{display:block;width:100%;height:220px;object-fit:cover}
+.fx-ok{color:#16a34a;font-weight:800}.fx-bad{color:#dc2626;font-weight:800}
+.fx-lg-row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #e2e8f0}
+.fx-lg-row.you{background:#eff6ff;border-radius:8px}.fx-lg-row .rk{width:30px;font-weight:800;color:#64748b}.fx-lg-row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.fx-lg-row .pt{font-weight:800}
+.fx-packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.fx-pack{border:2px solid #e2e8f0;border-radius:14px;padding:14px;text-align:center;background:#fff}.fx-pack b{display:block;font-size:26px}.fx-pack .tg{font-size:11px;font-weight:800;color:#16a34a;text-transform:uppercase}
+.fx-ad-view{padding:12px 14px;margin:0 0 14px}
+.fx-view-ad #fx-ad-strip{display:none!important}
+.fx-lr-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+.fx-lr-row .nm{flex:0 0 38%;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fx-lr-row .bar{flex:1;height:12px;background:#e2e8f0;border-radius:6px;overflow:hidden}
+.fx-lr-row .bar i{display:block;height:100%;background:#1d4ed8}
+.fx-lr-row .vl{flex:0 0 auto;min-width:84px;text-align:right;color:#334155}
+.fx-chip{display:inline-block;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;background:#e2e8f0;color:#334155;margin-left:8px}
+.fx-chip.live{background:#dc2626;color:#fff}
+.fx-chip.final{background:#16a34a;color:#fff}
 `;
   const style = document.createElement('style');
   style.textContent = css;
@@ -187,6 +229,8 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
     window[name] = function (id) {
       const r = orig.apply(this, arguments);
       try { if (views[id]) views[id].show(); } catch (e) { console.warn('[FCP extras]', e); }
+      try { refreshAd(false); } catch (_) {}
+      try { refreshViewAd(id); } catch (_) {}
       return r;
     };
   }
@@ -320,6 +364,24 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
       btn.disabled = true; btn.textContent = 'Read today';
       window.dispatchEvent(new Event('fx-credits'));
     });
+    tipSponsor(box);
+  }
+  // A sponsor line under the tip of the day (placement "tip"), hidden for paid members.
+  async function tipSponsor(box) {
+    try {
+      if (adHidden || await isPaidMember()) return;
+      const r = await api(`/engage/sponsor?placement=tip&lang=${LANG}`);
+      const s = r.ok && r.data && r.data.slot; if (!s) return;
+      api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'view', placement: 'tip' } });
+      const card = $('.fx-tip', box); if (!card) return;
+      const row = el(`<div class="fx-tip-ad"><span class="lb">${s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro'}</span>
+        <div><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div><button class="fx-btn sec">${esc(s.cta || 'Open')}</button></div>`);
+      card.appendChild(row);
+      $('button', row).addEventListener('click', () => {
+        api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'click', placement: 'tip' } });
+        openExternal(s.url);
+      });
+    } catch (_) {}
   }
   async function sponsorCard(box, tool) {
     const r = await api(`/engage/sponsor?placement=${encodeURIComponent(tool)}&lang=${LANG}`);
@@ -357,11 +419,11 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
   }
 
   // ── Podcasts ───────────────────────────────────────────────────────────────
-  const player = { show: null, ep: null, listenedMs: 0, last: 0, asked: false, bar: null, audio: null };
+  const player = { show: null, ep: null, listenedMs: 0, last: 0, asked: false, bar: null, audio: null, queue: [], auto: store.get('podAuto', true) };
   function ensurePlayer() {
     if (player.bar) return;
     player.bar = el(`<div class="fx-player" id="fx-player"><img alt=""><div class="pt"><b></b><span></span></div>
-      <button data-a="back" title="Back 15 seconds">-15s</button><audio controls preload="none"></audio><button data-a="fwd" title="Forward 30 seconds">+30s</button>
+      <button data-a="back" title="Back 15 seconds">-15s</button><audio controls preload="none"></audio><button data-a="fwd" title="Forward 30 seconds">+30s</button><button data-a="prev" title="Previous episode">⏮</button><button data-a="next" title="Next episode">⏭</button><button data-a="auto" title="Play the next episode automatically">Autoplay</button>
       <select data-a="speed" title="Speed"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option><option>2</option></select>
       <button data-a="close" title="Close">✕</button></div>`);
     document.body.appendChild(player.bar);
@@ -370,6 +432,9 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
       const a = e.target.dataset && e.target.dataset.a;
       if (a === 'back') player.audio.currentTime = Math.max(0, player.audio.currentTime - 15);
       if (a === 'fwd') player.audio.currentTime += 30;
+      if (a === 'prev') stepEpisode(-1);
+      if (a === 'next') stepEpisode(1);
+      if (a === 'auto') { player.auto = !player.auto; store.set('podAuto', player.auto); paintAuto(); }
       if (a === 'close') { player.audio.pause(); player.bar.classList.remove('show'); document.body.classList.remove('fx-has-player'); }
     });
     $('select', player.bar).addEventListener('change', e => { player.audio.playbackRate = Number(e.target.value); });
@@ -384,10 +449,19 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
         if (r.ok && r.data.granted) { window.dispatchEvent(new Event('fx-credits')); const s = $('span', player.bar); s.textContent = `+${r.data.amount} credit earned`; }
       }
     });
+    player.audio.addEventListener('ended', () => { if (player.auto) stepEpisode(1); });
+    paintAuto();
     player.audio.addEventListener('error', () => { $('span', player.bar).textContent = 'This episode could not be played. Try another one.'; });
   }
-  function playEpisode(show, ep) {
+  function paintAuto() { const b = player.bar && $('[data-a="auto"]', player.bar); if (b) { b.style.opacity = player.auto ? '1' : '.45'; b.textContent = player.auto ? 'Autoplay on' : 'Autoplay off'; } }
+  // Moves to the next (or previous) episode of the show that is playing, so nobody has to come back and pick.
+  function stepEpisode(d) {
+    const i = player.queue.findIndex(e => player.ep && e.audioUrl === player.ep.audioUrl) + d;
+    if (player.ep && i >= 0 && i < player.queue.length) playEpisode(player.show, player.queue[i], player.queue);
+  }
+  function playEpisode(show, ep, queue) {
     ensurePlayer();
+    if (queue) player.queue = queue;
     if (player.ep && player.ep.audioUrl === ep.audioUrl) { player.audio.paused ? player.audio.play() : player.audio.pause(); return; }
     player.show = show; player.ep = ep; player.listenedMs = 0; player.last = 0; player.asked = false;
     $('img', player.bar).src = ep.image || show.artwork || '';
@@ -426,7 +500,7 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
       const eps = (r.ok && r.data.episodes) || [];
       const box = $('#fx-eps', list);
       box.innerHTML = eps.length ? eps.map((e, i) => `<div class="fx-ep ${player.ep && player.ep.audioUrl === e.audioUrl ? 'now' : ''}" data-i="${i}"><div class="ic">▶</div><div style="flex:1;min-width:0"><div class="t" style="font-weight:700;font-size:14px">${esc(e.title)}</div><div class="fx-sub">${[e.published ? new Date(e.published).toLocaleDateString() : '', e.durationSeconds ? clock(e.durationSeconds) : ''].filter(Boolean).join(' · ')}</div></div></div>`).join('') : '<div class="fx-empty">No episodes could be loaded for this show.</div>';
-      box.querySelectorAll('.fx-ep').forEach(row => row.addEventListener('click', () => { box.querySelectorAll('.fx-ep').forEach(x => x.classList.remove('now')); row.classList.add('now'); playEpisode(p, eps[Number(row.dataset.i)]); }));
+      box.querySelectorAll('.fx-ep').forEach(row => row.addEventListener('click', () => { box.querySelectorAll('.fx-ep').forEach(x => x.classList.remove('now')); row.classList.add('now'); playEpisode(p, eps[Number(row.dataset.i)], eps); }));
     };
     root.querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => { genre = b.dataset.g; root.querySelectorAll('[data-g]').forEach(x => x.classList.toggle('on', x === b)); $('#fx-pod-q', root).value = ''; loadTop(); }));
     $('#fx-pod-go', root).addEventListener('click', search);
@@ -651,9 +725,422 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
     });
   }
 
+  // ── Sponsor strip: one slim sponsor card at the top of every page ───────────
+  // Uses the same sponsor slots as the mobile app. Paid Pro members do not see it.
+  // Placement is "dashboard" in the extension and "desktop" in the desktop app,
+  // so you can sell and measure each space on its own.
+  let adHidden = false, adAt = 0, adShownId = '';
+  async function isPaidMember() {
+    const r = await api('/auth/me');
+    const t = r.ok && r.data && r.data.user && r.data.user.pro_tier;
+    return !!t && t !== 'free' && t !== 'trial';
+  }
+  async function refreshAd(force) {
+    if (adHidden) return;
+    const box = document.getElementById('fx-ad-strip');
+    if (!box) return;
+    if (!force && Date.now() - adAt < 60000) return;
+    adAt = Date.now();
+    const placement = IS_DESKTOP ? 'desktop' : 'dashboard';
+    const r = await api(`/engage/sponsor?placement=${placement}&lang=${LANG}`);
+    const s = r.ok && r.data.slot; if (!s) { box.style.display = 'none'; return; }
+    if (adShownId !== s.id || force) api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'view', placement } });
+    adShownId = s.id;
+    box.style.display = 'flex';
+    box.innerHTML = `${s.image_url ? `<img src="${esc(s.image_url)}" alt="">` : ''}
+      <div class="tx"><span class="lb">${s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro'}</span><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div>
+      <button class="fx-btn">${esc(s.cta || 'Open')}</button>`;
+    $('button', box).addEventListener('click', () => {
+      api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'click', placement } });
+      openExternal(s.url);
+    });
+  }
+  async function mountSponsorStrip() {
+    const main = document.querySelector('main.main-content, main.main, main');
+    if (!main || document.getElementById('fx-ad-strip')) return;
+    const strip = el('<div id="fx-ad-strip" class="fx-ad" style="display:none"></div>');
+    main.insertBefore(strip, main.firstChild);
+    try { adHidden = await isPaidMember(); } catch (_) {}
+    if (adHidden) { strip.remove(); return; }
+    refreshAd(true);
+    mountViewAds();
+  }
+
+  // ── Inline sponsor cards inside the election tabs and FactPlay ─────────────
+  // These tabs get their own card at the top (the slim strip hides on them). Same slots,
+  // same placement names (dashboard in the extension, desktop in the desktop app).
+  const VIEW_ADS = ['election-nl', 'election-global', 'results', 'factplay', 'league'];
+  const viewAdAt = {};
+  async function fillViewAd(box) {
+    const placement = IS_DESKTOP ? 'desktop' : 'dashboard';
+    const r = await api(`/engage/sponsor?placement=${placement}&lang=${LANG}`);
+    const s = r.ok && r.data && r.data.slot; if (!s) { box.style.display = 'none'; return; }
+    api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'view', placement } });
+    box.style.display = 'flex';
+    box.innerHTML = `${s.image_url ? `<img src="${esc(s.image_url)}" alt="">` : ''}
+      <div class="tx"><span class="lb">${s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro'}</span><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div>
+      <button class="fx-btn">${esc(s.cta || 'Open')}</button>`;
+    $('button', box).addEventListener('click', () => {
+      api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'click', placement } });
+      openExternal(s.url);
+    });
+  }
+  function mountViewAds() {
+    if (adHidden) return;
+    VIEW_ADS.forEach(id => {
+      const v = document.getElementById('view-' + id);
+      if (!v || v.querySelector('[data-vad]')) return;
+      const box = el(`<div class="fx-ad fx-ad-view" data-vad="${id}" style="display:none"></div>`);
+      const hdr = v.querySelector('.view-header');
+      if (hdr) hdr.insertAdjacentElement('afterend', box); else v.insertBefore(box, v.firstChild);
+    });
+  }
+  function refreshViewAd(id) {
+    document.body.classList.toggle('fx-view-ad', !adHidden && VIEW_ADS.includes(id));
+    if (adHidden || !VIEW_ADS.includes(id)) return;
+    mountViewAds();
+    const box = document.querySelector(`[data-vad="${id}"]`);
+    if (!box || Date.now() - (viewAdAt[id] || 0) < 60000) return;
+    viewAdAt[id] = Date.now();
+    fillViewAd(box);
+  }
+
+  // ── Fact Card: a branded picture of a checked claim, with a smart share link ─
+  const CARD_BASE = 'https://app.factcheckerpro.net';
+  const verdictColor = v => {
+    const s = String(v || '').toLowerCase();
+    if (/false|fake|hoax|misinfo|onwaar/.test(s)) return '#dc2626';
+    if (/true|accurate|correct|waar|juist|verified/.test(s)) return '#16a34a';
+    return '#d97706';
+  };
+  function wrapText(ctx, text, maxW, maxLines) {
+    const words = String(text).split(/\s+/); const lines = []; let line = '';
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+    }
+    if (line) lines.push(line);
+    if (lines.length > maxLines) { lines.length = maxLines; lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, '') + '…'; }
+    return lines;
+  }
+  function drawFactCard(canvas, c) {
+    const W = 1080, H = 1080; canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#0b1437'); g.addColorStop(1, '#1d4ed8');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(60, 60, W - 120, H - 120, 40) : ctx.rect(60, 60, W - 120, H - 120); ctx.fill();
+    const col = verdictColor(c.verdict);
+    ctx.fillStyle = '#1d4ed8'; ctx.font = '800 38px system-ui, Segoe UI, Arial'; ctx.fillText('🔍 FactChecker Pro', 110, 150);
+    // verdict pill
+    const vt = String(c.verdict || 'Checked').toUpperCase() + (c.score != null ? '  ' + Math.round(c.score) + '%' : '');
+    ctx.font = '800 46px system-ui, Segoe UI, Arial';
+    const pw = Math.min(ctx.measureText(vt).width + 70, W - 220);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(110, 190, pw, 84, 42) : ctx.rect(110, 190, pw, 84); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.fillText(vt, 145, 250);
+    // claim
+    ctx.fillStyle = '#0f172a'; ctx.font = '800 54px system-ui, Segoe UI, Arial';
+    const cl = wrapText(ctx, '“' + c.claim + '”', W - 220, 5);
+    cl.forEach((l, i) => ctx.fillText(l, 110, 360 + i * 68));
+    // summary
+    let y = 360 + cl.length * 68 + 30;
+    if (c.summary) {
+      ctx.fillStyle = '#475569'; ctx.font = '500 34px system-ui, Segoe UI, Arial';
+      wrapText(ctx, c.summary, W - 220, Math.max(2, Math.floor((H - 330 - y) / 46))).forEach((l, i) => ctx.fillText(l, 110, y + i * 46));
+    }
+    // footer stamp
+    ctx.fillStyle = '#eff6ff'; ctx.fillRect(60, H - 250, W - 120, 190);
+    ctx.fillStyle = '#16a34a'; ctx.font = '800 40px system-ui, Segoe UI, Arial'; ctx.fillText('✔ Verified by FactChecker Pro', 110, H - 170);
+    ctx.fillStyle = '#334155'; ctx.font = '600 30px system-ui, Segoe UI, Arial'; ctx.fillText('Check your own claims free: factcheckerpro.net', 110, H - 110);
+  }
+  function openFactCard(card) {
+    const c = { claim: String(card.claim || '').trim(), verdict: card.verdict || 'Checked', score: card.score, summary: String(card.summary || '').trim(), source: IS_DESKTOP ? 'desktop' : 'extension' };
+    if (c.claim.length < 5) return;
+    const m = modal(`<h2>Fact Card</h2><div class="fx-sub" style="margin-bottom:10px">Share it with your friends. They get a link that shows the result and helps them check their own claims.</div>
+      <canvas style="width:100%;border-radius:12px;border:1px solid #e2e8f0"></canvas>
+      <div class="fx-row" style="margin-top:12px"><button class="fx-btn" data-a="dl">⬇ Download image</button><button class="fx-btn sec" data-a="copy">🔗 Copy link</button></div>
+      <div class="fx-row"><button class="fx-btn sec" data-a="wa">WhatsApp</button><button class="fx-btn sec" data-a="tg">Telegram</button><button class="fx-btn sec" data-a="x">X</button><button class="fx-btn sec" data-a="fb">Facebook</button></div>
+      <div class="fx-sub" data-msg></div>`);
+    const canvas = $('canvas', m); drawFactCard(canvas, c);
+    const msg = $('[data-msg]', m);
+    let link = null;
+    const getLink = async () => {
+      if (link) return link;
+      msg.textContent = 'Creating your link…';
+      let image = null;
+      try { image = canvas.toDataURL('image/jpeg', 0.82); } catch (_) {}
+      const r = await api('/cards', { method: 'POST', body: { claim: c.claim, verdict: c.verdict, score: c.score, summary: c.summary, lang: LANG, source: c.source, image } });
+      if (!r.ok || !r.data.url) { msg.textContent = (r.data && r.data.error) || 'Could not create the link. Try again.'; return null; }
+      link = r.data.url; msg.textContent = ''; return link;
+    };
+    const text = `“${c.claim.slice(0, 120)}${c.claim.length > 120 ? '…' : ''}” Verdict: ${c.verdict}. Checked with FactChecker Pro. Check your own claims:`;
+    m.addEventListener('click', async e => {
+      const a = e.target && e.target.dataset && e.target.dataset.a; if (!a) return;
+      if (a === 'dl') {
+        canvas.toBlob(b => { const u = URL.createObjectURL(b); const l = document.createElement('a'); l.href = u; l.download = 'factchecker-pro-card.png'; l.click(); setTimeout(() => URL.revokeObjectURL(u), 4000); }, 'image/png');
+        return;
+      }
+      const url = await getLink(); if (!url) return;
+      const enc = encodeURIComponent;
+      if (a === 'copy') { try { await navigator.clipboard.writeText(url); msg.textContent = 'Link copied.'; } catch (_) { msg.textContent = url; } }
+      if (a === 'wa') openExternal(`https://wa.me/?text=${enc(text + ' ' + url)}`);
+      if (a === 'tg') openExternal(`https://t.me/share/url?url=${enc(url)}&text=${enc(text)}`);
+      if (a === 'x') openExternal(`https://twitter.com/intent/tweet?text=${enc(text)}&url=${enc(url)}`);
+      if (a === 'fb') openExternal(`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`);
+    });
+  }
+  window.fcpFactCard = { open: openFactCard };
+
+  // ── Midterm Results board (US, 3 November 2026) ───────────────────────────
+  const PARTY_COL = { R: '#dc2626', D: '#2563eb', I: '#7c3aed', O: '#64748b' };
+  function resultsBoardHtml(b) {
+    const maxV = Math.max(...b.parties.map(p => (p.after != null ? p.after : p.before) || 0), 1);
+    const rows = b.parties.map(p => {
+      const val = p.after != null ? p.after : p.before;
+      const w = Math.round(((val || 0) / (b.total || maxV)) * 100);
+      const ch = p.change != null && p.change !== 0 ? ` <span class="fx-sub">(${p.change > 0 ? '+' : ''}${p.change})</span>` : '';
+      return `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px"><span style="color:${PARTY_COL[p.key] || '#334155'}">${esc(p.name)}</span><span>${val == null ? '–' : val}${ch}</span></div>
+        <div style="height:12px;background:#e2e8f0;border-radius:6px;overflow:hidden"><div style="height:100%;width:${w}%;background:${PARTY_COL[p.key] || '#64748b'}"></div></div></div>`;
+    }).join('');
+    const note = b.reported ? 'Seats won or leading so far' : 'Seats held now, results appear here as they are reported';
+    return `<div class="fx-card"><h3>${esc(b.title)}</h3><div class="fx-sub">${b.majority ? `${b.majority} needed for a majority · ` : ''}${note}</div>${rows}
+      <a class="fx-sub" href="#" data-ext="${esc(b.link)}">Source page</a></div>`;
+  }
+  async function initResults(root) {
+    root.innerHTML = '<div class="fx-empty">Loading the results board…</div>';
+    const draw = async () => {
+      const r = await api('/electionwatch/results?lang=' + LANG);
+      if (!r.ok) { root.innerHTML = '<div class="fx-empty">The results board is not available right now. Try again in a minute.</div>'; return; }
+      const d = r.data;
+      const label = { upcoming: 'Election day is 3 November 2026. Showing the seats held today.', waiting: 'Polls have closed. Waiting for the first results.', live: 'Live. Updates every few minutes.', final: 'Final results' }[d.status] || '';
+      root.innerHTML = `<div class="fx-card fx-brief"><b>🗳️ US midterms 2026</b><div class="fx-sub">${esc(label)} Last update ${ago(d.updated)}.</div></div>
+        <div class="fx-grid">${(d.boards || []).map(resultsBoardHtml).join('')}</div>
+        <div class="fx-sub" style="margin:4px 0 14px">${esc(d.source)} <a href="#" data-ext="${esc(d.official)}">Official results by state</a></div>
+        <h3 style="margin:14px 0 8px">Latest election news</h3>
+        ${(d.news || []).map(n => `<div class="fx-item" data-ext="${esc(n.url)}"><div><div class="t">${esc(n.title)}</div><div class="d">${esc(n.source || '')}</div></div></div>`).join('') || '<div class="fx-sub">No headlines right now.</div>'}
+        <h3 style="margin:14px 0 8px">Fact-checks on election claims</h3>
+        ${(d.claims || []).map(n => `<div class="fx-item" data-ext="${esc(n.url)}"><div><div class="t">${esc(n.title || n.claim || '')}</div><div class="d">${esc(n.source || n.publisher || '')}</div></div></div>`).join('') || '<div class="fx-sub">No fact-checks right now.</div>'}`;
+      root.querySelectorAll('[data-ext]').forEach(x => x.addEventListener('click', e => { e.preventDefault(); openExternal(x.dataset.ext); }));
+    };
+    await draw();
+    // Refresh every 2 minutes while the page is open.
+    const timer = setInterval(() => { if (!document.body.contains(root)) return clearInterval(timer); if (root.offsetParent) draw(); }, 120000);
+  }
+
+  // ── Live results switch under Election Watch Global ────────────────────────
+  // One button turns a live results board on for the country picked in the country list.
+  function lrBarHtml(rows) {
+    const max = Math.max(1, ...rows.map(r => r.seats != null ? r.seats : (r.pct != null ? r.pct : (r.votes || 0))));
+    return rows.map(r => {
+      const v = r.seats != null ? r.seats : (r.pct != null ? r.pct : (r.votes || 0));
+      const txt = [r.seats != null ? r.seats + ' seats' : '', r.pct != null ? r.pct + '%' : '', r.seats == null && r.votes != null ? r.votes.toLocaleString() + ' votes' : ''].filter(Boolean).join(' · ') || '-';
+      return `<div class="fx-lr-row"><span class="nm" title="${esc(r.name)}">${esc(r.name)}</span><span class="bar"><i style="width:${Math.max(2, Math.round(v / max * 100))}%"></i></span><span class="vl">${esc(txt)}</span></div>`;
+    }).join('');
+  }
+  function mountLiveResultsSwitch() {
+    const sel = document.getElementById('ewg-country-select');
+    const bar = sel && sel.closest('.nf-controls-bar');
+    if (!bar || document.getElementById('fx-lr-btn')) return;
+    bar.appendChild(el('<div class="nf-control-group"><span class="nf-label">Results</span><button id="fx-lr-btn" class="fx-btn sec" type="button" aria-pressed="false">📊 Live results: Off</button></div>'));
+    const panel = el('<div id="fx-lr-panel" style="display:none;margin-bottom:16px"></div>');
+    bar.insertAdjacentElement('afterend', panel);
+    const btn = document.getElementById('fx-lr-btn');
+    let on = false, timer = null;
+    const nameOf = () => { const o = sel.selectedOptions[0]; return o ? o.textContent.replace(/^[^\p{L}]+/u, '').trim() : ''; };
+    const draw = async () => {
+      const code = sel.value;
+      if (code === 'all' || code === 'africa') { panel.innerHTML = '<div class="fx-card"><div class="fx-sub">Pick a country in the list above to see its live results.</div></div>'; return; }
+      panel.innerHTML = '<div class="fx-card"><div class="fx-sub">Loading live results…</div></div>';
+      let html = '';
+      if (code === 'us') {
+        const r = await api('/electionwatch/results?lang=' + LANG);
+        if (r.ok && r.data && r.data.boards) {
+          const d = r.data;
+          html = `<div class="fx-card fx-brief"><b>🗳️ US midterms 2026</b><span class="fx-chip ${d.status === 'live' ? 'live' : (d.status === 'final' ? 'final' : '')}">${esc(d.status)}</span><div class="fx-sub">Updated ${ago(d.updated)}. ${esc(d.source)}</div></div><div class="fx-grid">${(d.boards || []).map(resultsBoardHtml).join('')}</div>`;
+        }
+      } else {
+        const r = await api('/electionwatch/results/country?name=' + encodeURIComponent(nameOf()) + '&code=' + encodeURIComponent(code));
+        const d = r.ok && r.data;
+        if (d && d.found) {
+          const stLabel = { upcoming: 'Upcoming', live: 'Live', final: 'Final' }[d.status] || '';
+          html = `<div class="fx-card"><h3>${esc(d.title)}${stLabel ? `<span class="fx-chip ${d.status}">${stLabel}</span>` : ''}</h3>
+            <div class="fx-sub">${d.date ? esc(d.date) + ' · ' : ''}Updated ${ago(d.updated)}</div>
+            ${d.rows && d.rows.length ? lrBarHtml(d.rows) : '<div class="fx-sub" style="margin-top:8px">No results have been published for this election yet. They appear here as soon as they are reported.</div>'}
+            <div class="fx-sub" style="margin-top:8px">${esc(d.source)} <a href="#" data-ext="${esc(d.link)}">Full results page</a></div></div>`;
+        }
+      }
+      panel.innerHTML = html || '<div class="fx-card"><div class="fx-sub">No live results found for this country right now. Election claims and news are listed below.</div></div>';
+      panel.querySelectorAll('[data-ext]').forEach(x => x.addEventListener('click', e => { e.preventDefault(); openExternal(x.dataset.ext); }));
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    btn.addEventListener('click', () => {
+      on = !on;
+      btn.textContent = '📊 Live results: ' + (on ? 'On' : 'Off');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.classList.toggle('sec', !on);
+      panel.style.display = on ? 'block' : 'none';
+      stop();
+      if (on) { draw(); timer = setInterval(() => { if (!document.body.contains(panel)) return stop(); if (panel.offsetParent) draw(); }, 90000); }
+    });
+    sel.addEventListener('change', () => { if (on) draw(); });
+  }
+
+  // ── FactPlay League: points, weekly tiers, tables and credits ───────────────
+  const TIER_NAMES = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
+  const seenQ = [];
+  const qbuf = { lang: '', items: [] };
+  async function initLeague(root) {
+    root.innerHTML = '<div class="fx-card"><div class="fx-sub">Loading your league…</div></div>';
+    const state = { tab: 'play', me: null, quota: null };
+    const loadMe = async () => { const r = await api('/factplay/league/me'); state.me = r.ok ? r.data : null; return state.me; };
+    const signedIn = await loadMe();
+    if (!signedIn) {
+      root.innerHTML = '<div class="fx-card"><b>🏆 FactPlay League</b><div class="fx-sub" style="margin-top:6px">Sign in to earn points, climb the weekly tiers and buy credits for picture rounds. Create a free account from the profile page.</div></div>';
+      return;
+    }
+    const heroHtml = () => {
+      const m = state.me || {};
+      const left = m.resets_at ? Math.max(0, Math.ceil((new Date(m.resets_at) - Date.now()) / 86400000)) : 0;
+      return `<div class="fx-card"><div class="fx-lg-hero">
+        <div><span class="fx-tier t${m.tier || 0}">${esc(m.tier_name || 'Bronze')}</span>
+          <div class="fx-sub" style="margin-top:6px">Week ends in ${left} day${left === 1 ? '' : 's'}. Top 25% move up, bottom 25% move down.</div></div>
+        <div class="fx-lg-stats"><div><b>${(m.week_points || 0).toLocaleString()}</b><span class="fx-sub">this week</span></div>
+          <div><b>${m.rank ? '#' + m.rank : '-'}</b><span class="fx-sub">in tier</span></div>
+          <div><b>${(m.total || 0).toLocaleString()}</b><span class="fx-sub">all time</span></div>
+          <div><b>${m.credits != null ? m.credits : 0}</b><span class="fx-sub">credits</span></div></div></div></div>`;
+    };
+    const draw = () => {
+      root.innerHTML = heroHtml() + `<div class="fx-tabs">${[['play', '🎮 Play'], ['table', '📊 League table'], ['credits', '💳 Credits']].map(([k, l]) => `<button data-t="${k}" class="${state.tab === k ? 'on' : ''}">${l}</button>`).join('')}</div><div id="fx-lg-body"></div>`;
+      root.querySelectorAll('.fx-tabs button').forEach(b => b.addEventListener('click', () => { state.tab = b.dataset.t; draw(); }));
+      const body = document.getElementById('fx-lg-body');
+      if (state.tab === 'play') drawPlay(body); else if (state.tab === 'table') drawTable(body); else drawCredits(body);
+    };
+
+    function drawPlay(body) {
+      body.innerHTML = `<div class="fx-grid">
+        <div class="fx-card"><h3>🧠 Quick quiz</h3><div class="fx-sub">True or false. 10 to 20 points for each right answer. Thousands of questions.</div><button class="fx-btn" id="fx-q-go" style="margin-top:10px">Start quiz</button></div>
+        <div class="fx-card"><h3>🖼️ Picture round</h3><div class="fx-sub">Spot the AI picture. 30 to 60 points. Free rounds every day, then 1 credit each.</div><button class="fx-btn" id="fx-p-go" style="margin-top:10px">Play pictures</button></div></div><div id="fx-play-area"></div>`;
+      document.getElementById('fx-q-go').addEventListener('click', () => nextQuestion());
+      document.getElementById('fx-p-go').addEventListener('click', () => nextPicture());
+    }
+    const area = () => document.getElementById('fx-play-area');
+    const afterAnswer = async (res) => { if (res && res.ok) { await loadMe(); const h = root.querySelector('.fx-card'); if (h) h.outerHTML = heroHtml(); } };
+
+    async function nextQuestion() {
+      const a = area(); a.innerHTML = '<div class="fx-card"><div class="fx-sub">Loading a question…</div></div>';
+      // Questions come a few at a time, so most rounds start instantly. The buffer is cleared when the language changes.
+      const lang = await appLang();
+      if (qbuf.lang !== lang) { qbuf.lang = lang; qbuf.items = []; }
+      if (!qbuf.items.length) {
+        const r = await api(`/factplay/quiz?n=6&lang=${lang}&exclude=${seenQ.slice(-300).join(',')}`);
+        qbuf.items = (r.ok && r.data.questions) || [];
+      }
+      const q = qbuf.items.shift();
+      if (!q) { a.innerHTML = '<div class="fx-card"><div class="fx-sub">No question right now. Try again in a moment.</div></div>'; return; }
+      seenQ.push(q.id);
+      a.innerHTML = `<div class="fx-card"><div class="fx-sub">Is this true or false? ${'⭐'.repeat(q.level || 1)}</div><div class="fx-q">${esc(q.text)}</div>
+        <div class="fx-tf"><button class="fx-btn" data-v="true">✅ True</button><button class="fx-btn sec" data-v="false">❌ False</button></div><div id="fx-q-res"></div></div>`;
+      a.querySelectorAll('.fx-tf button').forEach(b => b.addEventListener('click', async () => {
+        a.querySelectorAll('.fx-tf button').forEach(x => x.disabled = true);
+        const val = b.dataset.v === 'true';
+        const res = await api('/factplay/league/answer', { method: 'POST', body: { kind: 'text', ref: q.id, level: q.level || 1, answer: val } });
+        const d = res.ok ? res.data : {};
+        const right = d.correct != null ? d.correct : (val === q.answer);
+        document.getElementById('fx-q-res').innerHTML = `<div style="margin-top:12px"><span class="${right ? 'fx-ok' : 'fx-bad'}">${right ? '✅ Correct' : '❌ Not quite'}</span>${d.points ? ` <b>+${d.points} points</b>` : ''}${d.capped ? ' <span class="fx-sub">(daily points limit reached)</span>' : ''}
+          <div class="fx-sub" style="margin:6px 0 10px">The answer is ${q.answer ? 'true' : 'false'}. ${esc(q.explanation || '')}</div><button class="fx-btn" id="fx-q-next">Next question</button></div>`;
+        document.getElementById('fx-q-next').addEventListener('click', nextQuestion);
+        afterAnswer(d);
+      }));
+    }
+
+    async function nextPicture() {
+      const a = area(); a.innerHTML = '<div class="fx-card"><div class="fx-sub">Building a picture round… this can take a few seconds.</div></div>';
+      const r = await api('/factplay/image-round?level=1');
+      const d = r.ok && r.data;
+      if (!d || !d.realUrl) { a.innerHTML = '<div class="fx-card"><div class="fx-sub">Could not build a round right now. Try again in a moment.</div></div>'; return; }
+      const q = d.quota || {};
+      const aiFirst = Math.random() < 0.5;
+      const imgs = aiFirst ? [['ai', d.fakeUrl], ['real', d.realUrl]] : [['real', d.realUrl], ['ai', d.fakeUrl]];
+      a.innerHTML = `<div class="fx-card"><div class="fx-sub">Which picture is made by AI? ${esc(d.hint || '')}</div>
+        <div class="fx-pics" style="margin:10px 0">${imgs.map(([k, u]) => `<button data-k="${k}"><img src="${esc(u)}" alt="Picture"></button>`).join('')}</div>
+        <div class="fx-sub">${q.pro ? 'Pro: unlimited picture rounds.' : `${q.free_left != null ? q.free_left + ' free rounds left today. ' : ''}${q.credits || 0} credits.`}${q.limited ? ' <b>Free rounds are used up.</b>' : ''}</div><div id="fx-p-res"></div></div>`;
+      a.querySelectorAll('.fx-pics button').forEach(b => b.addEventListener('click', async () => {
+        a.querySelectorAll('.fx-pics button').forEach(x => x.disabled = true);
+        const pickedAi = b.dataset.k === 'ai';
+        const ref = d.fakeId || ('face-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+        const res = await api('/factplay/league/answer', { method: 'POST', body: { kind: 'image', ref, level: d.level || 1, pickedAi } });
+        const x = res.ok ? res.data : {};
+        a.querySelectorAll('.fx-pics button').forEach(btn => { btn.style.borderColor = btn.dataset.k === 'ai' ? '#16a34a' : '#e2e8f0'; });
+        document.getElementById('fx-p-res').innerHTML = `<div style="margin-top:12px"><span class="${pickedAi ? 'fx-ok' : 'fx-bad'}">${pickedAi ? '✅ You spotted the AI picture' : '❌ That was the real one'}</span>${x.points ? ` <b>+${x.points} points</b>` : ''}
+          <div style="margin-top:10px"><button class="fx-btn" id="fx-p-next">Next picture</button>${q.limited ? ' <button class="fx-btn sec" id="fx-p-buy">Buy credits</button>' : ''}</div></div>`;
+        document.getElementById('fx-p-next').addEventListener('click', nextPicture);
+        const buy = document.getElementById('fx-p-buy'); if (buy) buy.addEventListener('click', () => { state.tab = 'credits'; draw(); });
+        afterAnswer(x);
+      }));
+    }
+
+    async function drawTable(body) {
+      body.innerHTML = '<div class="fx-card"><div class="fx-tabs" id="fx-sc"></div><div id="fx-tb"><div class="fx-sub">Loading…</div></div></div>';
+      let scope = state.scope || 'tier';
+      const paint = async () => {
+        document.getElementById('fx-sc').innerHTML = [['tier', 'My tier'], ['week', 'Everyone this week'], ['all', 'All time']].map(([k, l]) => `<button data-s="${k}" class="${scope === k ? 'on' : ''}">${l}</button>`).join('');
+        document.querySelectorAll('#fx-sc button').forEach(b => b.addEventListener('click', () => { scope = state.scope = b.dataset.s; paint(); }));
+        const r = await api('/factplay/league/table?scope=' + scope);
+        const rows = (r.ok && r.data.rows) || [];
+        document.getElementById('fx-tb').innerHTML = rows.length ? rows.map(x => `<div class="fx-lg-row ${x.you ? 'you' : ''}"><span class="rk">${x.rank}</span><span>${esc(x.emoji || '')}</span><span class="nm">${esc(x.name)} <span class="fx-tier t${x.tier}" style="font-size:10px;padding:1px 8px">${esc(x.tier_name)}</span></span><span class="pt">${x.points.toLocaleString()}</span></div>`).join('') : '<div class="fx-sub">No one has points here yet. Be the first.</div>';
+      };
+      paint();
+    }
+
+    async function drawCredits(body) {
+      body.innerHTML = '<div class="fx-card"><div class="fx-sub">Loading credit packs…</div></div>';
+      const r = await api('/shop/packs');
+      const d = r.ok && r.data;
+      if (!d) { body.innerHTML = '<div class="fx-card"><div class="fx-sub">The shop is not available right now.</div></div>'; return; }
+      body.innerHTML = `<div class="fx-card"><b>You have ${d.credits != null ? d.credits : 0} credits</b><div class="fx-sub">One picture round costs 1 credit. Credits never expire. You also earn free credits by checking claims, reading the daily tip and more.</div></div>
+        <div class="fx-packs">${d.packs.map(p => `<div class="fx-pack">${p.tag ? `<div class="tg">${esc(p.tag)}</div>` : '<div class="tg">&nbsp;</div>'}<b>${p.credits}</b><div class="fx-sub">credits</div><button class="fx-btn" data-p="${p.id}" style="margin-top:8px;width:100%" ${d.methods.stripe ? '' : 'disabled'}>€${p.price_eur}</button></div>`).join('')}</div>
+        ${d.methods.stripe ? '<div class="fx-sub" style="margin-top:10px">Secure payment by Stripe. You return here when it is done.</div>' : '<div class="fx-sub" style="margin-top:10px">Buying credits opens soon. Keep playing and earning free credits meanwhile.</div>'}`;
+      body.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', async () => {
+        b.disabled = true;
+        const c = await api('/shop/checkout', { method: 'POST', body: { pack: b.dataset.p } });
+        if (c.ok && c.data.url) openExternal(c.data.url); else { b.disabled = false; alert((c.data && c.data.error) || 'Could not start the payment'); }
+      }));
+    }
+    draw();
+    // Credits bought in the browser land a moment later: refresh the balance when the tab is shown again.
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && document.body.contains(root)) loadMe().then(() => { const h = root.querySelector('.fx-card'); if (h) h.outerHTML = heroHtml(); }); });
+  }
+
+  // ── League tab inside FactPlay ──────────────────────────────────────────────
+  // Puts a "League" tab in the FactPlay tab bar (and a small points strip above the game)
+  // so players find the league without leaving Play.
+  function goView(id) { const f = window[IS_DESKTOP ? 'navigate' : 'switchView']; if (typeof f === 'function') f(id); }
+  async function mountLeagueTab() {
+    const v = document.getElementById('view-factplay');
+    if (!v || v.querySelector('[data-fx-league]')) return;
+    const tabs = v.querySelector('.si-tabs');
+    if (tabs) {
+      const b = el('<button class="si-tab" data-fx-league="1">🏅 League</button>');
+      b.addEventListener('click', () => goView('league'));
+      tabs.insertBefore(b, tabs.firstChild.nextSibling);
+    }
+    const strip = el('<div class="fx-lg-strip" data-fx-league-strip style="display:none"></div>');
+    const hdr = v.querySelector('.si-tabs');
+    if (hdr) hdr.insertAdjacentElement('afterend', strip);
+    const r = await api('/factplay/league/me');
+    if (!r.ok || !r.data) return;
+    const m = r.data;
+    strip.style.display = 'flex';
+    strip.innerHTML = `<span class="fx-tier t${m.tier || 0}">${esc(m.tier_name || 'Bronze')}</span>
+      <span><b>${(m.week_points || 0).toLocaleString()}</b> points this week</span><span>${m.rank ? 'Rank #' + m.rank : ''}</span><span>💳 ${m.credits || 0} credits</span>
+      <button class="fx-btn sec" style="margin-left:auto">Open league</button>`;
+    strip.querySelector('button').addEventListener('click', () => goView('league'));
+  }
+
   // ── Boot ───────────────────────────────────────────────────────────────────
   function boot() {
     try {
+      registerView({ id: 'results', icon: '🗳️', title: 'Midterm Results', subtitle: 'Live US midterms board: Senate, House and governors', init: initResults, after: 'election-global' });
+      registerView({ id: 'league', icon: '🏆', title: 'FactPlay League', subtitle: 'Earn points, climb the weekly tiers and beat the table', init: initLeague, after: 'factplay' });
       registerView({ id: 'videos', icon: '🎬', title: 'News Videos', subtitle: 'Clips from leading channels, plus a history explorer by year and topic', init: initVideos });
       registerView({ id: 'conflict', icon: '🕊️', title: 'Conflict Watch', subtitle: 'News, fact-checks and trusted accounts from conflict zones', init: initConflict, after: 'videos' });
       registerView({ id: 'jobs', icon: '💼', title: 'Job Offer Check', subtitle: 'Spot job scams and find real leads', init: initJobs, after: 'conflict' });
@@ -671,10 +1158,22 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
         const st = podView.querySelector('.view-subtitle'); if (st) st.textContent = 'Find a show, listen to episodes and fact-check what you hear';
       }
       hookNavigation();
+      mountSponsorStrip();
+      // A card sent over from the page tooltip (extension only).
+      if (!IS_DESKTOP && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+        chrome.storage.local.get('fc_pending_card', r => {
+          const c = r && r.fc_pending_card;
+          if (!c) return;
+          chrome.storage.local.remove('fc_pending_card');
+          if (Date.now() - (c.at || 0) < 10 * 60 * 1000) openFactCard(c);
+        });
+      }
       mountCreditsChip();
       mountHelpCredits();
       mountProfileExtras();
       extendElectionCountries();
+      mountLiveResultsSwitch();
+      try { mountLeagueTab(); } catch (_) {}
     } catch (e) { console.warn('[FCP extras] failed to start:', e); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

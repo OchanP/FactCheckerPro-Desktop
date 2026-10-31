@@ -1062,6 +1062,7 @@ function initAiAnalysis() {
       document.getElementById('ai-score-fill').style.width  = `${score}%`;
       document.getElementById('ai-score-fill').style.background = scoreColor;
       document.getElementById('ai-summary').textContent = data.summary || '';
+      window.__lastAiCard = { claim: text, verdict: data.verdict || 'Checked', score: data.confidence, summary: data.summary || '' };
 
       const flagsBlock = document.getElementById('ai-flags-block');
       const flagsEl    = document.getElementById('ai-flags');
@@ -2261,3 +2262,8 @@ function initFactPlay() {
   fpInitScreenshot();
   fpInitSpotFake();
 }
+
+// Fact Card: share the last AI result as a branded picture with a smart link.
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'ai-card-btn' && window.fcpFactCard && window.__lastAiCard) window.fcpFactCard.open(window.__lastAiCard);
+});
