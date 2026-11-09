@@ -7,7 +7,7 @@ const { registerNativeHost } = require('./nativeHost');
 const { startBridgeServer } = require('./bridgeServer');
 
 // Windows Toast notifications need a stable AppUserModelId to route correctly.
-app.setAppUserModelId('com.factcheckerpro.desktop');
+if (process.platform === 'win32') app.setAppUserModelId('com.factcheckerpro.desktop');
 
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
@@ -81,7 +81,7 @@ if (!gotLock) {
     });
   });
 
-  // Keep running in the tray on window close (standard tray-app behavior on Windows).
+  // Keep running in the tray (Windows) or menu bar and Dock (Mac) when windows are closed.
   app.on('window-all-closed', () => {
     // no-op — tray keeps the app alive
   });

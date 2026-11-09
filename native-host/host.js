@@ -18,7 +18,11 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const BRIDGE_INFO_PATH = path.join(os.homedir(), 'AppData', 'Roaming', 'factchecker-pro-desktop', 'bridge.json');
+// The desktop app passes the exact location in FCP_BRIDGE_INFO (the Mac launcher does).
+// Otherwise fall back to the app's userData folder for the current platform.
+const BRIDGE_INFO_PATH = process.env.FCP_BRIDGE_INFO || (process.platform === 'darwin'
+  ? path.join(os.homedir(), 'Library', 'Application Support', 'factchecker-pro-desktop', 'bridge.json')
+  : path.join(os.homedir(), 'AppData', 'Roaming', 'factchecker-pro-desktop', 'bridge.json'));
 
 function readNativeMessage(callback) {
   const lenBuf = Buffer.alloc(4);

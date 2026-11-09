@@ -92,7 +92,69 @@ function getDevCmdPath() {
   return cmdPath;
 }
 
+// macOS: browsers read a manifest file from their own NativeMessagingHosts folder.
+// The host is host.js run by the app's own Electron binary in Node mode, started
+// through a small launcher script in userData (browsers need one executable path).
+const MAC_BROWSER_DIRS = [
+  'Google/Chrome',
+  'Google/Chrome Beta',
+  'Google/Chrome Canary',
+  'Microsoft Edge',
+  'BraveSoftware/Brave-Browser',
+  'Vivaldi',
+  'Chromium',
+  'Arc/User Data',
+  'Yandex/YandexBrowser',
+];
+
+function registerNativeHostMac() {
+  const os = require('os');
+  const hostJs = app.isPackaged
+    ? path.join(process.resourcesPath, 'native-host', 'host.js')
+    : path.join(__dirname, '..', '..', 'native-host', 'host.js');
+  if (!fs.existsSync(hostJs)) {
+    console.warn('[FCPro] host.js not found, live bridge will be offline.');
+    return;
+  }
+  const dir = path.join(app.getPath('userData'), 'native-host');
+  const launcher = path.join(dir, 'fc-native-host.sh');
+  const bridgeInfo = path.join(app.getPath('userData'), 'bridge.json');
+  const q = s => "'" + String(s).replace(/'/g, "'\\''") + "'";
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(launcher,
+      '#!/bin/sh\n' +
+      'export ELECTRON_RUN_AS_NODE=1\n' +
+      'export FCP_BRIDGE_INFO=' + q(bridgeInfo) + '\n' +
+      'exec ' + q(process.execPath) + ' ' + q(hostJs) + ' "$@"\n');
+    fs.chmodSync(launcher, 0o755);
+  } catch (e) {
+    console.warn('[FCPro] Could not write the native host launcher:', e.message);
+    return;
+  }
+  const manifest = JSON.stringify({
+    name: HOST_NAME,
+    description: 'FactChecker Pro Desktop bridge',
+    path: launcher,
+    type: 'stdio',
+    allowed_origins: ALLOWED_ORIGINS,
+  }, null, 2);
+  const support = path.join(os.homedir(), 'Library', 'Application Support');
+  for (const b of MAC_BROWSER_DIRS) {
+    const browserDir = path.join(support, b);
+    if (!fs.existsSync(browserDir)) continue; // only browsers the user actually has
+    try {
+      const target = path.join(browserDir, 'NativeMessagingHosts');
+      fs.mkdirSync(target, { recursive: true });
+      fs.writeFileSync(path.join(target, HOST_NAME + '.json'), manifest);
+    } catch (e) {
+      console.warn('[FCPro] Could not register native host for', b, e.message);
+    }
+  }
+}
+
 function registerNativeHost() {
+  if (process.platform === 'darwin') return registerNativeHostMac();
   if (process.platform !== 'win32') return;
 
   let hostPath = getHostExePath();

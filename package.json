@@ -1,7 +1,7 @@
 {
   "name": "factchecker-pro-desktop",
   "version": "1.8.2",
-  "description": "FactChecker Pro — Windows companion app (account hub, notifications, manual claim checking)",
+  "description": "FactChecker Pro companion app for Windows and Mac (account hub, education, notifications, claim checking)",
   "main": "src/main/main.js",
   "author": "FactChecker Pro",
   "license": "UNLICENSED",
@@ -12,7 +12,8 @@
     "dist": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis --x64 --arm64",
     "dist:appx": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win appx --x64",
     "dist:all": "npm run build:native-host && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win nsis appx --x64",
-    "create-shortcut": "node scripts/create-shortcut.js"
+    "create-shortcut": "node scripts/create-shortcut.js",
+    "dist:mac": "electron-builder --mac --universal --publish never"
   },
   "dependencies": {
     "electron-store": "^8.2.0"
@@ -37,12 +38,6 @@
       "assets/**/*",
       "package.json"
     ],
-    "extraResources": [
-      {
-        "from": "native-host/fc-native-host.exe",
-        "to": "native-host/fc-native-host.exe"
-      }
-    ],
     "win": {
       "target": [
         {
@@ -53,7 +48,13 @@
           ]
         }
       ],
-      "icon": "assets/icons/icon.ico"
+      "icon": "assets/icons/icon.ico",
+      "extraResources": [
+        {
+          "from": "native-host/fc-native-host.exe",
+          "to": "native-host/fc-native-host.exe"
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,
@@ -78,6 +79,40 @@
         "en-US",
         "nl-NL"
       ]
+    },
+    "mac": {
+      "category": "public.app-category.education",
+      "icon": "assets/icons/icon1080.png",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": true,
+      "artifactName": "FactCheckerPro-${version}-mac.${ext}",
+      "extraResources": [
+        {
+          "from": "native-host/host.js",
+          "to": "native-host/host.js"
+        }
+      ]
+    },
+    "dmg": {
+      "title": "FactChecker Pro",
+      "artifactName": "FactCheckerPro-${version}-mac.dmg"
     }
   }
 }
