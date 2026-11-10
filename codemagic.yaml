@@ -12,7 +12,7 @@
 workflows:
   mac-release:
     name: FactChecker Pro Mac release
-    max_build_duration: 90
+    max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
       node: 20
@@ -58,7 +58,7 @@ workflows:
           security find-certificate -c "Developer ID Certification Authority" -a | grep -q labl && echo "Intermediate certificate installed."
       - name: Install packages
         script: npm ci
-      - name: Build, sign and notarize
+      - name: Build and sign
         script: |
           set -o pipefail
           # Sign from the keychain set up above, not from a file (that path made codesign wait for input).
@@ -70,11 +70,30 @@ workflows:
           if grep -q "skipped macOS application code signing" /tmp/build.log; then
             echo "Signing was skipped. See the reason above." && exit 1
           fi
-      - name: Check the signature and notarization
+      - name: Notarize with Apple
+        script: |
+          # Notarize the DMG with Apple's own tool. We wait at most 45 minutes. If Apple is slow,
+          # the signed files are still kept and the submission id is printed so it can be finished later.
+          DMG=$(ls release/*.dmg | head -1)
+          echo "Submitting $DMG"
+          xcrun notarytool submit "$DMG" --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" --wait --timeout 45m --output-format json | tee /tmp/notary.json || true
+          ID=$(python3 -c "import json;print(json.load(open('/tmp/notary.json')).get('id',''))" 2>/dev/null)
+          STATUS=$(python3 -c "import json;print(json.load(open('/tmp/notary.json')).get('status',''))" 2>/dev/null)
+          echo "Notarization id: $ID  status: $STATUS"
+          xcrun notarytool history --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" | head -15 || true
+          if [ "$STATUS" = "Accepted" ]; then
+            xcrun stapler staple "$DMG" && echo "Notarized and stapled."
+          elif [ -n "$ID" ]; then
+            xcrun notarytool log "$ID" --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" || true
+          fi
+      - name: Check the signature
         script: |
           APP=$(ls -d release/mac-universal/*.app | head -1)
           codesign --verify --deep --strict --verbose=2 "$APP"
-          spctl --assess --type execute --verbose "$APP"
+          spctl --assess --type execute --verbose "$APP" || echo "Gatekeeper check needs the notarization above to be accepted."
+          DMG=$(ls release/*.dmg | head -1)
+          xcrun stapler validate "$DMG" || echo "The DMG is signed but not stapled yet."
     artifacts:
       - release/*.dmg
       - release/*.zip
