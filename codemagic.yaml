@@ -12,7 +12,7 @@
 workflows:
   mac-release:
     name: FactChecker Pro Mac release
-    max_build_duration: 60
+    max_build_duration: 90
     instance_type: mac_mini_m2
     environment:
       node: 20
@@ -33,7 +33,11 @@ workflows:
           if ! openssl pkcs12 -in "$CERT" -passin env:CSC_KEY_PASSWORD -noout -legacy 2>/dev/null && ! openssl pkcs12 -in "$CERT" -passin env:CSC_KEY_PASSWORD -noout 2>/dev/null; then
             echo "The certificate in CSC_LINK could not be opened. Paste the whole of CSC_LINK.txt again, and check CSC_KEY_PASSWORD." && exit 1
           fi
-          echo "CSC_LINK=$CERT" >> $CM_ENV
+          # Put the certificate in Codemagic's own keychain. It is unlocked with no timeout and allows
+          # codesign without a password prompt, so signing cannot hang waiting for input.
+          keychain initialize
+          keychain add-certificates --certificate "$CERT" --certificate-password "$CSC_KEY_PASSWORD"
+          security find-identity -v -p codesigning
           if [ -n "$APP_STORE_CONNECT_PRIVATE_KEY" ]; then
             mkdir -p ~/private_keys
             echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_keys/AuthKey.p8
@@ -57,6 +61,11 @@ workflows:
       - name: Build, sign and notarize
         script: |
           set -o pipefail
+          # Sign from the keychain set up above, not from a file (that path made codesign wait for input).
+          unset CSC_LINK CSC_KEY_PASSWORD
+          export CSC_IDENTITY_AUTO_DISCOVERY=true
+          export CSC_NAME="Moses Atocon (Y8C463562V)"
+          export DEBUG=electron-osx-sign*,electron-builder:mac*
           npm run dist:mac 2>&1 | tee /tmp/build.log
           if grep -q "skipped macOS application code signing" /tmp/build.log; then
             echo "Signing was skipped. See the reason above." && exit 1
