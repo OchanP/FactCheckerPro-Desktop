@@ -43,10 +43,24 @@ workflows:
           elif [ -z "$APPLE_ID" ]; then
             echo "Add the App Store Connect API key or an Apple ID for notarization." && exit 1
           fi
+      - name: Install Apple's Developer ID intermediate certificate
+        script: |
+          # Without it macOS reports the Developer ID certificate as not trusted (CSSMERR_TP_NOT_TRUSTED)
+          # and electron-builder skips signing.
+          curl -fsSL -o /tmp/DeveloperIDG2CA.cer https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer
+          curl -fsSL -o /tmp/AppleWWDRCAG3.cer https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+          sudo security add-certificates -k /Library/Keychains/System.keychain /tmp/DeveloperIDG2CA.cer /tmp/AppleWWDRCAG3.cer || \
+            security add-certificates /tmp/DeveloperIDG2CA.cer /tmp/AppleWWDRCAG3.cer || true
+          security find-certificate -c "Developer ID Certification Authority" -a | grep -q labl && echo "Intermediate certificate installed."
       - name: Install packages
         script: npm ci
       - name: Build, sign and notarize
-        script: npm run dist:mac
+        script: |
+          set -o pipefail
+          npm run dist:mac 2>&1 | tee /tmp/build.log
+          if grep -q "skipped macOS application code signing" /tmp/build.log; then
+            echo "Signing was skipped. See the reason above." && exit 1
+          fi
       - name: Check the signature and notarization
         script: |
           APP=$(ls -d release/mac-universal/*.app | head -1)
