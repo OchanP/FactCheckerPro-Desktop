@@ -149,6 +149,10 @@
 body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
 .fx-ad{display:flex;align-items:center;gap:12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:8px 12px;margin:0 0 12px;font-size:13px;color:#0f172a}
 .fx-ad img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.fx-ad-banner{display:block!important;padding:6px 10px;text-align:center}
+.fx-ad .bn{max-width:728px;margin:0 auto;text-align:left}
+.fx-ad .bn-btn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:8px;overflow:hidden}
+.fx-ad .bn-btn img{width:100%;height:auto;max-height:250px;border-radius:8px;object-fit:contain}
 .fx-ad .tx{flex:1;min-width:0;line-height:1.35}
 .fx-ad .lb{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:700}
 .fx-ad .tx span:not(.lb){color:#475569}
@@ -511,7 +515,7 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
 
   // ── News Videos and History explorer ───────────────────────────────────────
   const LOCAL_CODES = ['nl', 'de', 'fr', 'es', 'it', 'gb', 'ie', 'us', 'ca', 'au', 'in', 'ke', 'ng', 'za', 'gh'];
-  const VID_TABS = [['local', 'Local'], ['global', 'Global'], ['europe', 'Europe'], ['africa', 'Africa'], ['history', 'History']];
+  const VID_TABS = [['local', 'Local'], ['global', 'Global'], ['europe', 'Europe'], ['africa', 'Africa'], ['asia', 'Asia'], ['southamerica', 'South America'], ['oceania', 'Oceania'], ['history', 'History']];
   const HIST_GENRES = [['', 'All'], ['war', 'War'], ['politics', 'Politics'], ['science', 'Science'], ['space', 'Space'], ['disasters', 'Disasters'], ['sports', 'Sports'], ['culture', 'Culture'], ['africa', 'Africa'], ['health', 'Health'], ['economy', 'Economy'], ['media', 'Media']];
   function initVideos(root) {
     let tab = 'global';
@@ -730,6 +734,17 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
   // Placement is "dashboard" in the extension and "desktop" in the desktop app,
   // so you can sell and measure each space on its own.
   let adHidden = false, adAt = 0, adShownId = '';
+  // Markup for one sponsor strip. A banner card (wide image from the server) is one clickable image with a small
+  // Sponsored label, other cards keep the text layout. The image sits inside the button so the click handler stays the same.
+  function adHtml(s) {
+    const label = s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro';
+    if (s.banner_url && /^https:\/\//.test(s.banner_url)) {
+      return `<div class="bn"><span class="lb">${label}</span><button class="bn-btn" title="${esc(s.title)}"><img src="${esc(s.banner_url)}" alt="${esc(s.title)}"></button></div>`;
+    }
+    return `${s.image_url ? `<img src="${esc(s.image_url)}" alt="">` : ''}
+      <div class="tx"><span class="lb">${label}</span><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div>
+      <button class="fx-btn">${esc(s.cta || 'Open')}</button>`;
+  }
   async function isPaidMember() {
     const r = await api('/auth/me');
     const t = r.ok && r.data && r.data.user && r.data.user.pro_tier;
@@ -747,9 +762,8 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
     if (adShownId !== s.id || force) api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'view', placement } });
     adShownId = s.id;
     box.style.display = 'flex';
-    box.innerHTML = `${s.image_url ? `<img src="${esc(s.image_url)}" alt="">` : ''}
-      <div class="tx"><span class="lb">${s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro'}</span><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div>
-      <button class="fx-btn">${esc(s.cta || 'Open')}</button>`;
+    box.innerHTML = adHtml(s);
+    box.classList.toggle('fx-ad-banner', !!(s.banner_url && /^https:\/\//.test(s.banner_url)));
     $('button', box).addEventListener('click', () => {
       api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'click', placement } });
       openExternal(s.url);
@@ -777,9 +791,8 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
     const s = r.ok && r.data && r.data.slot; if (!s) { box.style.display = 'none'; return; }
     api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'view', placement } });
     box.style.display = 'flex';
-    box.innerHTML = `${s.image_url ? `<img src="${esc(s.image_url)}" alt="">` : ''}
-      <div class="tx"><span class="lb">${s.sponsored ? 'Sponsored' + (s.sponsor ? ' · ' + esc(s.sponsor) : '') : 'FactChecker Pro'}</span><b>${esc(s.title)}</b> <span>${esc(s.body)}</span></div>
-      <button class="fx-btn">${esc(s.cta || 'Open')}</button>`;
+    box.innerHTML = adHtml(s);
+    box.classList.toggle('fx-ad-banner', !!(s.banner_url && /^https:\/\//.test(s.banner_url)));
     $('button', box).addEventListener('click', () => {
       api('/engage/sponsor/event', { method: 'POST', body: { id: s.id, kind: 'click', placement } });
       openExternal(s.url);
@@ -1037,7 +1050,7 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
       const q = qbuf.items.shift();
       if (!q) { a.innerHTML = '<div class="fx-card"><div class="fx-sub">No question right now. Try again in a moment.</div></div>'; return; }
       seenQ.push(q.id);
-      a.innerHTML = `<div class="fx-card"><div class="fx-sub">Is this true or false? ${'⭐'.repeat(q.level || 1)}</div><div class="fx-q">${esc(q.text)}</div>
+      a.innerHTML = `<div class="fx-card"><div class="fx-sub">${q.news ? '📰 <b>News watch</b> · this week in the news · ' : ''}Is this true or false? ${'⭐'.repeat(q.level || 1)}</div><div class="fx-q">${esc(q.text)}</div>
         <div class="fx-tf"><button class="fx-btn" data-v="true">✅ True</button><button class="fx-btn sec" data-v="false">❌ False</button></div><div id="fx-q-res"></div></div>`;
       a.querySelectorAll('.fx-tf button').forEach(b => b.addEventListener('click', async () => {
         a.querySelectorAll('.fx-tf button').forEach(x => x.disabled = true);
@@ -1136,6 +1149,119 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
     strip.querySelector('button').addEventListener('click', () => goView('league'));
   }
 
+  // ── Headline Decoder and Forward Check (run in the browser, no server call) ──
+  const wre = w => new RegExp('\\b(?:' + w + ')\\b', 'gi');
+  const TECHNIQUES = [
+    { name: 'Fear words', icon: '⚠️', color: '#dc2626', weight: 14, cap: 28, why: 'Words that make you feel danger push you to react before you think.', ask: 'Is the danger real and close to you, or does the wording make it feel that way?', re: [wre('terrifying|deadly|killer|horror|nightmare|catastrophe|catastrophic|crisis|chaos|panic|threat|threatens|dangerous|alarming|toxic|poison|poisoned|collapse|collapsing|doom|apocalypse|outbreak|invasion|disaster|lethal')] },
+    { name: 'Outrage bait', icon: '🔥', color: '#ea580c', weight: 14, cap: 28, why: 'Anger spreads faster than any other feeling online. Fighting words turn news into a battle.', ask: 'What actually happened, without the fighting words?', re: [wre('slams|slammed|blasts|blasted|destroys|destroyed|rips|furious|outrage|outraged|fury|disgusting|disgrace|disgraceful|shameful|betrayal|betrays|betrayed|humiliates|humiliated|savage|brutal|scandal|exposed|caught|liar|lies|war on|attacks')] },
+    { name: 'Clickbait', icon: '🎣', color: '#db2777', weight: 16, cap: 32, why: 'It teases a surprise but holds back the facts, so you have to click to find out.', ask: 'Can you say what the story is about from the headline alone?', re: [wre("you won'?t believe|won'?t believe|what happened next|this is why|here'?s why|the reason why|the truth about|the real reason|they don'?t want you to know|secret|secrets|revealed|finally|mind.blowing|jaw.dropping|insane|unbelievable|incredible|shocking|must.see|goes viral|gone viral|blow your mind|one weird trick"), /\b\d+\s+(?:things|reasons|ways|signs|secrets|facts|tricks)\b/gi] },
+    { name: 'All or nothing', icon: '↔️', color: '#7c3aed', weight: 8, cap: 16, why: 'Real life is rarely always or never. Absolute words hide the exceptions.', ask: 'Is it really everyone and every time, or just some people sometimes?', re: [wre('always|never|everyone|everybody|nobody|no one|completely|totally|entirely|guaranteed|proven|undeniable|definitely|the only'), /100\s?%/gi] },
+    { name: 'Vague sources', icon: '🕵️', color: '#0891b2', weight: 12, cap: 24, why: 'Unnamed experts and "sources" cannot be checked. Good reporting names who said it.', ask: 'Who exactly said this, and can you find them?', re: [wre('experts say|scientists say|doctors say|sources say|sources claim|insiders?|people are saying|many are saying|reportedly|allegedly|rumou?rs?|it is believed|some say|according to reports|studies show|research shows')] },
+    { name: 'Hurry up', icon: '⏱️', color: '#d97706', weight: 12, cap: 24, why: 'Urgency stops you from checking. Real news will still be true in ten minutes.', ask: 'What happens if you wait and check first?', re: [wre("breaking|urgent|act now|right now|before it'?s too late|before it'?s deleted|share before|share now|last chance|hurry|immediately|just in")] },
+  ];
+  function decodeHeadline(text) {
+    const findings = []; let score = 0;
+    for (const t of TECHNIQUES) {
+      const hits = [];
+      for (const re of t.re) { re.lastIndex = 0; let m; while ((m = re.exec(text))) { hits.push(m[0]); if (m[0] === '') re.lastIndex++; } }
+      if (hits.length) { const pts = Math.min(t.cap, hits.length * t.weight); score += pts; findings.push({ name: t.name, icon: t.icon, color: t.color, why: t.why, ask: t.ask, examples: [...new Set(hits.map(h => h.toLowerCase()))], points: pts }); }
+    }
+    const okCaps = new Set(['USA', 'NATO', 'COVID', 'WHO', 'BBC', 'CNN', 'NTV', 'UN', 'EU', 'UK', 'MP', 'AI']);
+    const caps = (text.match(/\b[A-Z]{3,}\b/g) || []).filter(c => !okCaps.has(c));
+    if (caps.length >= 2) { score += 12; findings.push({ name: 'Shouting in capitals', icon: '📢', color: '#475569', why: 'Capital letters act like shouting and make ordinary words feel urgent.', ask: 'Would it sound as important in normal letters?', examples: [...new Set(caps)], points: 12 }); }
+    const bangs = (text.match(/!/g) || []).length;
+    if (bangs > 0) { const pts = bangs >= 2 ? 14 : 8; score += pts; findings.push({ name: 'Exclamation marks', icon: '❗', color: '#be123c', why: 'Serious news outlets almost never use exclamation marks in headlines.', ask: 'Does the news need the extra excitement?', examples: ['!'.repeat(Math.min(bangs, 3))], points: pts }); }
+    const tr = text.trim();
+    if (tr.endsWith('?') && /^(is|are|was|were|will|could|can|did|does|do|has|have|should|would)\b/i.test(tr)) { score += 10; findings.push({ name: 'Question headline', icon: '❓', color: '#2563eb', why: 'A headline that asks a yes or no question often hints at something it cannot prove. The answer is usually no.', ask: 'If the answer were yes, why not just say so?', examples: [tr.split(' ').slice(0, 3).join(' ')], points: 10 }); }
+    findings.sort((a, b) => b.points - a.points);
+    return { score: Math.min(100, score), findings };
+  }
+  function markHeadline(text, findings) {
+    // Highlight the words found, in the colour of their technique.
+    let html = esc(text);
+    findings.forEach(f => f.examples.forEach(w => {
+      if (!w || w === '!!' || w === '!!!') return;
+      const safe = esc(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      html = html.replace(new RegExp('(' + safe + ')', 'gi'), `<mark style="background:${f.color}22;color:${f.color};border-radius:4px;padding:0 2px;font-weight:700">$1</mark>`);
+    }));
+    return html;
+  }
+  function initDecoder(root) {
+    const examples = ["You WON'T BELIEVE what this minister just did! Experts say it's a total disaster", 'BREAKING: Deadly new virus spreading fast, share before it is deleted!!', 'Parliament passes budget with changes to school funding', 'Is your phone secretly listening to everything you say?'];
+    root.innerHTML = `<div class="fx-card"><h3>🔎 Headline Decoder</h3><div class="fx-sub" style="margin-bottom:8px">Paste a headline, post or caption and see how hard it pulls on your emotions. It does not say if a claim is true. It shows the tricks used to make people click, feel and share.</div>
+      <textarea class="fx-area" id="fx-hd-text" placeholder="Paste a headline or post here"></textarea>
+      <div class="fx-row" style="margin-top:8px"><button class="fx-btn" id="fx-hd-go">Decode it</button>${examples.map((e, i) => `<button class="fx-chip" data-ex="${i}">Example ${i + 1}</button>`).join('')}</div><div id="fx-hd-out"></div></div>`;
+    const run = () => {
+      const t = $('#fx-hd-text', root).value.trim(); const out = $('#fx-hd-out', root);
+      if (!t) { out.innerHTML = ''; return; }
+      const r = decodeHeadline(t);
+      const level = r.score < 20 ? ['Calm wording', '#16a34a', 'Nothing here pulls hard on your emotions. It can still be wrong, so check the claim.'] : r.score < 45 ? ['Some emotional pull', '#d97706', 'A few techniques are at work. Read past the wording before you react.'] : ['Heavy emotional pull', '#dc2626', 'Many techniques stack up. Slow down and check before you share.'];
+      out.innerHTML = `<div style="margin-top:12px"><div style="font-size:15px;line-height:1.6;background:#f8fafc;border-radius:10px;padding:10px 12px">${markHeadline(t, r.findings)}</div>
+        <div style="margin:12px 0 4px"><b style="color:${level[1]};font-size:16px">${level[0]}</b> <span class="fx-sub">emotional pull ${r.score}/100</span></div><div class="fx-sub">${level[2]}</div>
+        ${r.findings.map(f => `<div class="fx-item"><div style="font-size:24px">${f.icon}</div><div><div class="t" style="color:${f.color}">${esc(f.name)} <span class="fx-sub">${esc(f.examples.slice(0, 5).join(', '))}</span></div><div class="d">${esc(f.why)}</div><div class="d" style="color:#334155"><b>Ask yourself:</b> ${esc(f.ask)}</div></div></div>`).join('')}</div>`;
+    };
+    $('#fx-hd-go', root).addEventListener('click', run);
+    root.querySelectorAll('[data-ex]').forEach(b => b.addEventListener('click', () => { $('#fx-hd-text', root).value = examples[Number(b.dataset.ex)]; run(); }));
+  }
+
+  const FWD_SIGNS = [
+    { name: 'Begs to be shared', icon: '📤', weight: 25, why: 'Messages that ask you to forward them are built to spread, not to inform. Real warnings come from official channels.', re: /forward (this|it)|share (this|it) (with|to)|send (this|it) to|pass (this|it) on|forward to \d+|to all your (contacts|groups|friends)|copy and paste|before (it'?s|it is) (deleted|removed)|don'?t ignore|if you don'?t (share|forward)|forwarded many times|share widely|please share/gi },
+    { name: 'Asks for codes or private details', icon: '🔑', weight: 30, why: 'No bank, telecom or app will ever ask you to send a code, PIN or password in a chat. This is how accounts get stolen.', re: /\botp\b|verification code|\d.digit code|\bpin\b|password|bank (details|account)|card number|\bcvv\b|mobile money pin|national id|id number|send (me|us) the code/gi },
+    { name: 'Prize or free money', icon: '🎁', weight: 22, why: 'If you did not enter, you did not win. Free gifts are bait to collect your details or a "processing fee".', re: /you('ve| have) won|congratulations|\bwinner\b|claim your|free (gift|airtime|data|money|phone|iphone|bundle)|cash prize|lottery|giveaway|\bgrant of\b|\breward\b|bonus of/gi },
+    { name: 'Pressure to act fast', icon: '⏱️', weight: 18, why: 'Deadlines and threats are there to stop you from checking. A real company gives you time.', re: /\burgent\b|immediately|within 24 hours|today only|expires (today|soon)|account (will be|has been) (suspended|blocked|closed|deactivated)|last warning|final notice|act now/gi },
+    { name: 'Suspicious link', icon: '🔗', weight: 22, why: 'Short or unusual links hide where they go. Open the official website yourself instead of clicking.', re: /bit\.ly|tinyurl|cutt\.ly|is\.gd|rb\.gy|shorturl|\.xyz\b|\.top\b|\.click\b|\.loan\b|\.work\b|\.buzz\b|http:\/\/|https?:\/\/\d+\.\d+\.\d+\.\d+/gi },
+    { name: 'Uses a big name', icon: '🏛️', weight: 15, why: "Hoaxes borrow trusted names like WhatsApp, banks, WHO or the government. Check that name's official page.", re: /(whatsapp|facebook|meta|google|microsoft|mtn|airtel|safaricom|m-pesa|mpesa|the bank|central bank|\bwho\b|unicef|government|ministry|president|the police)\b.{0,30}\b(will|is going to|has|announced|warns|says|confirmed)|whatsapp will (start )?charg|from tomorrow/gi },
+    { name: 'Health miracle or scare', icon: '🩺', weight: 18, why: 'Miracle cures and secret dangers spread fast in chats. Health advice should come from a doctor or health ministry.', re: /\bcures?\b|\bcured\b|miracle|doctors (don'?t|hate)|drink (hot|warm) water|kills (the )?virus|vaccine contains|natural remedy|boil (garlic|lemon|ginger)|100% effective/gi },
+    { name: 'Source you cannot check', icon: '👤', weight: 12, why: 'A friend of a friend, an unnamed insider or "forwarded as received" means nobody stands behind it.', re: /a friend of (a|my) friend|my (uncle|cousin|friend|brother|sister) (who )?works|forwarded as received|source:?\s*(unknown|whatsapp)|anonymous|an insider|received this from/gi },
+  ];
+  function initForward(root) {
+    const examples = ['URGENT!! WhatsApp will start charging from tomorrow. Forward this to 10 groups to keep your account free!', 'Congratulations! You have won 500,000 UGX airtime. Send me the 6-digit code you just received to claim your prize.', "My cousin who works at the hospital says boiling garlic water cures the virus. Doctors don't want you to know. Please share."];
+    root.innerHTML = `<div class="fx-card"><h3>📨 Forward Check</h3><div class="fx-sub" style="margin-bottom:8px">Got a forward on WhatsApp, Telegram or SMS? Paste it here and check it before you pass it on. Nothing leaves your browser.</div>
+      <textarea class="fx-area" id="fx-fc-text" placeholder="Paste the message here"></textarea>
+      <div class="fx-row" style="margin-top:8px"><button class="fx-btn" id="fx-fc-go">Check it</button>${examples.map((e, i) => `<button class="fx-chip" data-ex="${i}">Example ${i + 1}</button>`).join('')}</div><div id="fx-fc-out"></div></div>`;
+    const run = () => {
+      const t = $('#fx-fc-text', root).value.trim(); const out = $('#fx-fc-out', root);
+      if (!t) { out.innerHTML = ''; return; }
+      const hits = []; let score = 0;
+      for (const s of FWD_SIGNS) { s.re.lastIndex = 0; const found = [...new Set((t.match(s.re) || []).map(x => x.toLowerCase()))]; if (found.length) { hits.push({ s, found }); score += s.weight; } }
+      const letters = t.replace(/[^A-Za-z]/g, ''); const capsShare = letters ? letters.replace(/[^A-Z]/g, '').length / letters.length : 0;
+      if (capsShare > 0.35 || (t.match(/!/g) || []).length >= 3) score += 8;
+      score = Math.min(100, score); hits.sort((a, b) => b.s.weight - a.s.weight);
+      const v = score < 20 ? ['No common warning signs', '#16a34a', 'Nothing typical of hoaxes or scams. If it makes a claim, it is still worth checking before you share.'] : score < 45 ? ['Be careful', '#d97706', 'Some warning signs. Do not click links or send anything until you have checked it.'] : ['Likely hoax or scam', '#dc2626', 'Several classic warning signs. Do not forward it, click its links or reply with any details.'];
+      out.innerHTML = `<div style="margin-top:12px"><b style="color:${v[1]};font-size:16px">${v[0]}</b> <span class="fx-sub">risk ${score}/100</span><div class="fx-sub">${v[2]}</div>
+        ${hits.map(h => `<div class="fx-item"><div style="font-size:24px">${h.s.icon}</div><div><div class="t">${esc(h.s.name)} <span class="fx-sub">${esc(h.found.slice(0, 4).join(', '))}</span></div><div class="d">${esc(h.s.why)}</div></div></div>`).join('')}</div>`;
+    };
+    $('#fx-fc-go', root).addEventListener('click', run);
+    root.querySelectorAll('[data-ex]').forEach(b => b.addEventListener('click', () => { $('#fx-fc-text', root).value = examples[Number(b.dataset.ex)]; run(); }));
+  }
+
+  // ── FactReels ──────────────────────────────────────────────────────────────
+  function initReels(root) {
+    let cat = 'foryou', page = 0, cats = [{ key: 'foryou', label: 'For you' }];
+    root.innerHTML = `<div class="fx-row" id="fx-rcats"></div><div class="fx-sub" style="margin-bottom:10px">Short videos picked for you, with fact-checks and community picks mixed in. They open on YouTube.</div><div id="fx-rout"></div><div class="fx-row" style="margin-top:10px"><button class="fx-btn sec" id="fx-rmore" style="display:none">Load more</button></div>`;
+    const out = $('#fx-rout', root);
+    const card = v => `<div class="fx-vcard" data-url="${esc(v.url)}"><div class="fx-vthumb">${v.image ? `<img loading="lazy" src="${esc(v.image)}" alt="">` : ''}<div class="fx-play">▶</div></div>
+      <div class="fx-vbody"><div class="fx-vtitle">${esc(v.claim || v.title || '')}</div><div class="fx-vmeta"><span>${esc(v.publisher || '')}</span><span>${esc(v.categoryLabel || (v.rating ? '🔎 ' + v.rating : 'Fact-check'))}${v.checked ? ' · ✅ checked' : ''}</span></div></div></div>`;
+    async function load(more) {
+      if (!more) { page = 0; out.innerHTML = '<div class="fx-empty">Loading…</div>'; }
+      const r = await api(`/reels/feed?cat=${cat}&lang=${LANG}&page=${page}&seed=${store.get('reelseed', (store.set('reelseed', 1 + Math.floor(Math.random() * 99999)), store.get('reelseed', 1)))}`);
+      const list = (r.ok && Array.isArray(r.data.reels) && r.data.reels) || [];
+      if (r.ok && r.data.categories && r.data.categories.length) { cats = r.data.categories; drawCats(); }
+      if (r.ok && r.data.pending && !list.length) { out.innerHTML = '<div class="fx-empty">The reels are being prepared. Try again in a minute.</div>'; return; }
+      const html = list.map(card).join('');
+      if (!more) out.innerHTML = list.length ? `<div class="fx-grid">${html}</div>` : '<div class="fx-empty">No reels right now. Try again in a moment.</div>';
+      else { const g = out.querySelector('.fx-grid'); if (g) g.insertAdjacentHTML('beforeend', html); }
+      out.querySelectorAll('.fx-vcard:not([data-w])').forEach(c => { c.dataset.w = '1'; c.addEventListener('click', () => openExternal(c.dataset.url)); });
+      $('#fx-rmore', root).style.display = list.length ? '' : 'none';
+    }
+    function drawCats() {
+      $('#fx-rcats', root).innerHTML = cats.map(c => `<button class="fx-chip ${c.key === cat ? 'on' : ''}" data-c="${esc(c.key)}">${esc(c.label)}</button>`).join('');
+    }
+    $('#fx-rcats', root).addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; cat = b.dataset.c; drawCats(); load(false); });
+    $('#fx-rmore', root).addEventListener('click', () => { page++; load(true); });
+    drawCats(); load(false);
+  }
+
   // ── Boot ───────────────────────────────────────────────────────────────────
   function boot() {
     try {
@@ -1144,6 +1270,9 @@ body.fx-has-player .main,body.fx-has-player main{padding-bottom:84px}
       registerView({ id: 'videos', icon: '🎬', title: 'News Videos', subtitle: 'Clips from leading channels, plus a history explorer by year and topic', init: initVideos });
       registerView({ id: 'conflict', icon: '🕊️', title: 'Conflict Watch', subtitle: 'News, fact-checks and trusted accounts from conflict zones', init: initConflict, after: 'videos' });
       registerView({ id: 'jobs', icon: '💼', title: 'Job Offer Check', subtitle: 'Spot job scams and find real leads', init: initJobs, after: 'conflict' });
+      registerView({ id: 'reels', icon: '🎞️', title: 'FactReels', subtitle: 'Short videos with fact-checks and community picks', init: initReels, after: 'videos' });
+      registerView({ id: 'decoder', icon: '🔎', title: 'Headline Decoder', subtitle: 'See how a headline pulls on your emotions', init: initDecoder, after: 'jobs' });
+      registerView({ id: 'forwardcheck', icon: '📨', title: 'Forward Check', subtitle: 'Check a WhatsApp, Telegram or SMS forward before you share it', init: initForward, after: 'decoder' });
       registerView({ id: 'activity', icon: '🔔', title: 'Activity', subtitle: 'Your claims, points, badges, followers and a daily briefing', init: initActivity, after: 'jobs' });
       // Podcasts reuses the existing podcast-search view and nav item.
       const podView = document.getElementById('view-podcast-search');
